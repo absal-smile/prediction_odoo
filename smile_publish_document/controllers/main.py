@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
-from io import BytesIO
-import base64
-
+from werkzeug.utils import redirect
 from odoo import http, _
 from odoo.http import request
-from werkzeug.utils import redirect
+import base64
 
 
 class WebsiteAttachmentPage(http.Controller):
@@ -15,8 +11,7 @@ class WebsiteAttachmentPage(http.Controller):
             [('website_published', '=', True)])
         documents = {}
         for record in attachment_ids:
-            document_type = record.document_type_id and record.document_type_id.name or _(
-                'Others')
+            document_type = record.document_type_id and record.document_type_id.name or _('Others')  # noqa E501
             if document_type in documents:
                 documents[document_type].append(record)
             else:
@@ -31,8 +26,13 @@ class WebsiteAttachmentPage(http.Controller):
 
     @http.route(['/attachment/download'], type='http', auth='public')
     def download_attachment(self, attachment_id, **kw):
-        fields = ["store_fname", "datas", "mimetype", "res_model", "res_id",
-                  "type", "url"]
+        fields = ["store_fname",
+                  "datas",
+                  "mimetype",
+                  "res_model",
+                  "res_id",
+                  "type",
+                  "url"]
         attachment = request.env['ir.attachment'].sudo().search_read(
             [('id', '=', int(attachment_id))], fields)
         if not attachment:
@@ -44,6 +44,11 @@ class WebsiteAttachmentPage(http.Controller):
             else:
                 return request.not_found()
         if attachment["datas"]:
-            data = BytesIO(base64.standard_b64decode(attachment["datas"]))
-            return http.send_file(data, filename=attachment['store_fname'],
-                                  as_attachment=True)
+            data = base64.b64decode(attachment["datas"])
+            response = request.make_response(data, [
+                ('Content-Type',
+                 attachment['mimetype'] or 'application/octet-stream'),
+                ('Content-Disposition',
+                 f'attachment; filename="{attachment["store_fname"]}"'),
+            ])
+            return response
