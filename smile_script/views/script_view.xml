@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data noupdate="0">
 
-
         <menuitem id="menu_interventions" parent="base.menu_custom"
-          name="Maintenance" sequence="25" groups="base.group_no_one"/>
+            name="Maintenance" sequence="25" groups="base.group_no_one" />
 
         <record id="smile_script_form_view" model="ir.ui.view">
             <field name="name">Smile script - Form</field>
@@ -13,41 +12,53 @@
             <field name="arch" type="xml">
                 <form string="Script">
                     <header>
-                        <button name="run_test" type="object" string="Test" class="oe_highlight"/>
+                        <button name="run_test" type="object" string="Test" class="oe_highlight" />
                         <button name="validate" type="object" string="Validate"
-                            class="btn-info" attrs="{'invisible': [('state', '=', 'validated')]}"/>
-                        <button name="run" type="object" string="Run" attrs="{'invisible': [('state', '=', 'draft')]}"
-                            class="btn-danger" confirm="Are you sure you want to perform a new intervention ?"/>
-                        <field name="state" widget="statusbar"/>
+                            class="btn-info" invisible="state == 'validated'" />
+                        <button name="run" type="object" string="Run"
+                            class="btn-danger"
+                            confirm="Are you sure you want to perform a new intervention ?"
+                            invisible="state == 'draft'" />
+                        <field name="state" widget="statusbar" />
                     </header>
                     <sheet>
                         <div class="oe_title">
-                            <label for="name" class="oe_edit_only"/>
+                            <label for="name" class="oe_edit_only" />
                             <h1>
-                                <field name="name" class="oe_inline"/>
+                                <field name="name" class="oe_inline" readonly="state == 'validated'" />
                             </h1>
                         </div>
                         <notebook>
                             <page string="Script">
-                                <label for="description"/>
-                                <field name="description"/>
-                                <label for="type"/>
-                                <field name="type"/>
-                                <label for="code"/><span attrs="{'invisible': [('type', '!=', 'python')]}"><i>You can use the following variables: self, fields, logger, tools. To display a result, use the variable "result".</i></span>
-                                <field name="code" placeholder="result = 'String displayed in the result column of intervention'"/>
-                                <div attrs="{'invisible': [('type', '!=', 'sql')]}"><field name="expect_result"/><label for="expect_result"/></div>
-                                <label for="intervention_ids"/>
-                                <field name="intervention_ids" context="{'script_form_view': True}"/>
+                                <label for="description" />
+                                <field name="description" readonly="state == 'validated'" />
+                                <label for="type" />
+                                <field name="type" readonly="state == 'validated'" />
+                                <label for="code" />
+                                <span invisible="type != 'python'">
+                                    <i>You can use the following variables: self, fields, logger,
+                                        tools. To display a result, use the variable
+                                        &quot;result&quot;.</i>
+                                </span>
+                                <field name="code"
+                                    placeholder="result = 'String displayed in the result column of intervention'"
+                                    readonly="state == 'validated'" />
+                                <div invisible="type != 'sql'">
+                                    <label for="expect_result" />
+                                    <field name="expect_result" readonly="state == 'validated'" />
+                                </div>
+                                <label for="intervention_ids" />
+                                <field name="intervention_ids" context="{'script_form_view': True}" />
                             </page>
                             <page string="Infos">
                                 <group>
                                     <group>
-                                        <field name="create_date"/>
-                                        <field name="create_uid"/>
+                                        <field name="create_date" />
+                                        <field name="create_uid" />
                                     </group>
-                                    <group attrs="{'invisible': [('state', '=', 'draft')]}">
-                                        <field name="validation_date"/>
-                                        <field name="validation_user_id"/>
+                                    <group invisible="state == 'draft'">
+                                        <field name="validation_date" />
+                                        <field name="validation_user_id" />
                                     </group>
                                 </group>
                             </page>
@@ -58,15 +69,15 @@
         </record>
 
         <record id="smile_script_tree_view" model="ir.ui.view">
-            <field name="name">Smile script - Tree</field>
+            <field name="name">Smile script - List</field>
             <field name="model">smile.script</field>
-            <field name="type">tree</field>
+            <field name="type">list</field>
             <field name="arch" type="xml">
-                <tree string="Scripts">
-                    <field name="name"/>
-                    <field name="type"/>
-                    <field name="state"/>
-                </tree>
+                <list string="Scripts">
+                    <field name="name" />
+                    <field name="type" />
+                    <field name="state" />
+                </list>
             </field>
         </record>
 
@@ -76,15 +87,17 @@
             <field name="type">search</field>
             <field name="arch" type="xml">
                 <search string="Scripts">
-                    <filter name="draft" string="Draft" icon="terp-document-new" domain="[('state', '=', 'draft')]" />
-                    <filter name="validated" string="Validated" icon="terp-camera_test" domain="[('state', '=', 'validated')]" />
-                    <separator orientation="vertical"/>
-                    <field name="name"/>
-                    <field name="description"/>
-                    <field name="type"/>
-                    <newline/>
-                    <field name="description"/>
-                    <field name="code"/>
+                    <filter name="draft" string="Draft" icon="terp-document-new"
+                        domain="[('state', '=', 'draft')]" />
+                    <filter name="validated" string="Validated" icon="terp-camera_test"
+                        domain="[('state', '=', 'validated')]" />
+                    <separator orientation="vertical" />
+                    <field name="name" />
+                    <field name="description" />
+                    <field name="type" />
+                    <newline />
+                    <field name="description" />
+                    <field name="code" />
                 </search>
             </field>
         </record>
@@ -93,12 +106,11 @@
             <field name="name">Maintenance Scripts</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">smile.script</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
         </record>
 
         <menuitem id="menu_smile_script" parent="menu_interventions" action="act_smile_script"
-            name="Scripts"
-        	groups="base.group_no_one"/>
+            name="Scripts" groups="base.group_no_one" />
 
         <record id="smile_script_intervention_form_view" model="ir.ui.view">
             <field name="name">Smile script intervention - Form</field>
@@ -108,16 +120,16 @@
                 <form string="Intervention">
                     <sheet>
                         <group col="6">
-                            <field name="script_id" invisible="context.get('script_form_view')"/>
-                            <field name="state"/>
-                            <field name="create_date"/>
-                            <field name="create_uid"/>
-                            <field name="test_mode"/>
-                            <field name="end_date"/>
-                            <separator string="Result" colspan="6"/>
-                            <field name="result" nolabel="1" colspan="6"/>
-                            <separator string="Logs" colspan="6"/>
-                            <field name="log_ids" colspan="6" nolabel="1"/>
+                            <field name="script_id" readonly="1" />
+                            <field name="state" />
+                            <field name="create_date" />
+                            <field name="create_uid" />
+                            <field name="test_mode" />
+                            <field name="end_date" />
+                            <separator string="Result" colspan="6" />
+                            <field name="result" nolabel="1" colspan="6" />
+                            <separator string="Logs" colspan="6" />
+                            <field name="log_ids" colspan="6" nolabel="1" />
                         </group>
                     </sheet>
                 </form>
@@ -125,20 +137,22 @@
         </record>
 
         <record id="smile_script_intervention_tree_view" model="ir.ui.view">
-            <field name="name">Smile script intervention - Tree</field>
+            <field name="name">Smile script intervention - list</field>
             <field name="model">smile.script.intervention</field>
-            <field name="type">tree</field>
+            <field name="type">list</field>
             <field name="arch" type="xml">
-                <tree string="Interventions"
-                decoration-muted="test_mode == True" decoration-success="state == 'done'" decoration-danger="state == 'exception'">
-                    <field name="script_id" invisible="context.get('script_form_view')"/>
-                    <field name="create_uid"/>
-                    <field name="create_date"/>
-                    <field name="end_date"/>
-                    <field name="state"/>
-                    <field name="test_mode"/>
-                    <field name="result"/>
-                </tree>
+                <list string="Interventions"
+                    decoration-muted="test_mode == True"
+                    decoration-success="state == 'done'"
+                    decoration-danger="state == 'exception'">
+                    <field name="script_id" readonly="1" />
+                    <field name="create_uid" />
+                    <field name="create_date" />
+                    <field name="end_date" />
+                    <field name="state" />
+                    <field name="test_mode" />
+                    <field name="result" />
+                </list>
             </field>
         </record>
 
@@ -149,23 +163,25 @@
             <field name="arch" type="xml">
                 <search string="Interventions">
                     <group>
-                        <filter name="running" string="Running" domain="[('state','=','running')]"/>
-                        <filter name="done" string="Done" domain="[('state','=','done')]"/>
-                        <filter name="exception" string="Exception" domain="[('state','=','exception')]"/>
-                        <separator orientation="vertical"/>
-                        <filter name="validated_script" string="Validated script" domain="[('test_mode','=',False)]"/>
-                        <separator orientation="vertical"/>
-                        <field name="script_id"/>
-                        <field name="result"/>
+                        <filter name="running" string="Running" domain="[('state','=','running')]" />
+                        <filter name="done" string="Done" domain="[('state','=','done')]" />
+                        <filter name="exception" string="Exception"
+                            domain="[('state','=','exception')]" />
+                        <separator orientation="vertical" />
+                        <filter name="validated_script" string="Validated script"
+                            domain="[('test_mode','=',False)]" />
+                        <separator orientation="vertical" />
+                        <field name="script_id" />
+                        <field name="result" />
                     </group>
-                    <newline/>
-                    <field name="create_uid"/>
-                    <field name="test_mode"/>
-                    <newline/>
+                    <newline />
+                    <field name="create_uid" />
+                    <field name="test_mode" />
+                    <newline />
                     <group string="Group By..." expand="0">
-                        <filter name="script" string="Script" context="{'group_by':'script_id'}"/>
-                        <filter name="state" string="State" context="{'group_by':'state'}"/>
-                        <filter name="user" string="User" context="{'group_by':'create_uid'}"/>
+                        <filter name="script" string="Script" context="{'group_by':'script_id'}" />
+                        <filter name="state" string="State" context="{'group_by':'state'}" />
+                        <filter name="user" string="User" context="{'group_by':'create_uid'}" />
                     </group>
                 </search>
             </field>
@@ -175,15 +191,15 @@
             <field name="name">Maintenance Interventions</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">smile.script.intervention</field>
-            <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="smile_script_intervention_search_view"/>
-            <field name="view_id" ref="smile_script_intervention_tree_view"/>
-            <field name="context">{'search_default_validated_script': True}</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="smile_script_intervention_search_view" />
+            <field name="view_id" ref="smile_script_intervention_tree_view" />
+            <field name="context">{'script_form_view': False, 'search_default_validated_script':
+                True}</field>
         </record>
 
         <menuitem id="menu_smile_script_intervention" parent="menu_interventions"
-            name="Interventions"
-            action="act_smile_script_intervention" groups="base.group_no_one"/>
+            name="Interventions" action="act_smile_script_intervention" groups="base.group_no_one" />
 
     </data>
-</openerp>
+</odoo>
