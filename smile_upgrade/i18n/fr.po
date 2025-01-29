@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0-20231113\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-20 11:33+0000\n"
-"PO-Revision-Date: 2023-11-20 11:33+0000\n"
+"POT-Creation-Date: 2024-12-10 03:35+0000\n"
+"PO-Revision-Date: 2024-12-10 03:35+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,13 +16,12 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: smile_upgrade
-#. odoo-javascript
-#: code:addons/smile_upgrade/static/src/xml/code_version.xml:0
-#, python-format
-msgid "Close"
-msgstr "Fermer"
-
-#. module: smile_upgrade
 #: model:ir.model,name:smile_upgrade.model_ir_code_version
 msgid "Code Version"
 msgstr "Version de code"
+
+#. module: smile_upgrade
+#. odoo-javascript
+#: code:addons/smile_upgrade/static/src/code_version.xml:0
+msgid "Version"
+msgstr "Version"

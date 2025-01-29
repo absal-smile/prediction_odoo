@@ -1,5 +1,6 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
+import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState } from "@odoo/owl";
 import { Dropdown } from "@web/core/dropdown/dropdown";
@@ -28,7 +29,9 @@ DisplayCodeVersion.props = {};
 
 export const systrayItem = {
     Component: DisplayCodeVersion,
-    isDisplayed: (env) => env.services.user.isSystem,
+    isDisplayed: () => {
+        return user.isSystem;
+    },
 };
 
 registry
