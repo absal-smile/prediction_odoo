@@ -3,16 +3,9 @@ import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState } from "@odoo/owl";
-import { Dropdown } from "@web/core/dropdown/dropdown";
-import { DropdownItem } from "@web/core/dropdown/dropdown_item";
 import { _t } from "@web/core/l10n/translation";
 
 class DisplayCodeVersion extends Component {
-    static components = {
-        ...Component.components,
-        Dropdown,
-        DropdownItem,
-    };
     setup() {
         this.orm = useService("orm");
         const self = this;
