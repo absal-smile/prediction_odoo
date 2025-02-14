@@ -8,6 +8,10 @@ Requirements
 
 * Odoo 18.0
 
+# Add the banner.gif file
+
+Put the gif file in static/description directory 
+
 # How to documentate your module
 
 ## Requirements
