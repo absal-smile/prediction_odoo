@@ -1,0 +1,12 @@
+<odoo>
+    <record id="ux_feedback_rule_user" model="ir.rule">
+        <field name="name">UX Feedback User Rule</field>
+        <field name="model_id" ref="model_ux_feedback"/>
+        <field name="groups" eval="[(4, ref('group_ux_feedback_user'))]"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+</odoo>

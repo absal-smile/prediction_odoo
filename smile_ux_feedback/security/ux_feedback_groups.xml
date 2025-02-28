@@ -1,0 +1,22 @@
+<odoo>
+    <record id="ux_feedback_category" model="ir.module.category">
+        <field name="name">UX Feedback</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="group_ux_feedback_user" model="res.groups">
+        <field name="name">UX Feedback User</field>
+        <field name="category_id" ref="ux_feedback_category"/>
+    </record>
+
+    <record id="group_ux_feedback_manager" model="res.groups">
+        <field name="name">UX Feedback Manager</field>
+        <field name="category_id" ref="ux_feedback_category"/>
+        <field name="implied_ids" eval="[(4, ref('group_ux_feedback_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="base.default_user" model="res.users">
+        <field name="groups_id" eval="[(4,ref('group_ux_feedback_user'))]"/>
+    </record>
+</odoo>

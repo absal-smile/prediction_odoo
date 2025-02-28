@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ux_feedback_user,Access UX Feedback User,model_ux_feedback,group_ux_feedback_user,1,1,1,1
+access_ux_feedback_manager,Access UX Feedback Manager,model_ux_feedback,group_ux_feedback_manager,1,1,1,1
+access_ux_feedback_wizard_user,Access UX Feedback Wizard User,model_ux_feedback_wizard,group_ux_feedback_user,1,1,1,0
+access_ux_feedback_wizard_manager,Access UX Feedback Wizard Manager,model_ux_feedback_wizard,group_ux_feedback_manager,1,1,1,1
+access_ux_performance_user,Access UX Performance User,model_ux_performance,group_ux_feedback_user,1,0,0,0
+access_ux_performance_manager,Access UX Performance Manager,model_ux_performance,group_ux_feedback_manager,1,1,1,1
+access_ux_conformity_user,Access UX Conformity User,model_ux_conformity,group_ux_feedback_user,1,0,0,0
+access_ux_conformity_manager,Access UX Conformity Manager,model_ux_conformity,group_ux_feedback_manager,1,1,1,1
+access_ux_satisfaction_user,Access UX Satisfaction User,model_ux_satisfaction,group_ux_feedback_user,1,0,0,0
+access_ux_satisfaction_manager,Access UX Satisfaction Manager,model_ux_satisfaction,group_ux_feedback_manager,1,1,1,1
