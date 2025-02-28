@@ -37,15 +37,19 @@ class ResPartnerContactPointMixin(models.AbstractModel):
             ('contact_point_type', '=', self.contact_point_type),
         ]
 
-    @api.model
-    def create(self, vals):
-        is_default = vals.get('is_default')
-        if is_default:
-            del vals['is_default']
-        record = super(ResPartnerContactPointMixin, self).create(vals)
-        if is_default:
-            record.is_default = True
-        return record
+    @api.model_create_multi
+    def create(self, vals_list):
+        is_default_list = []
+        for vals in vals_list:
+            is_default = vals.get('is_default')
+            is_default_list.append(is_default)
+            if is_default:
+                del vals['is_default']
+        records = super().create(vals_list)
+        for record, is_default in zip(records, is_default_list):
+            if is_default:
+                record.is_default = True
+        return records
 
     def write(self, vals):
         if vals.get('is_default'):

@@ -30,8 +30,8 @@ class ResPartner(models.Model):
     def _set_contact_point(self, contact_point_type):
         if self[contact_point_type]:
             contact_point = self.contact_point_ids.filtered(
-                lambda cp: cp.name == self[contact_point_type] and
-                cp.contact_point_type == contact_point_type)
+                lambda cp: cp.name == self[contact_point_type]
+                           and cp.contact_point_type == contact_point_type)
             if not contact_point:
                 self.contact_point_ids.create({
                     'name': self[contact_point_type],
@@ -45,17 +45,21 @@ class ResPartner(models.Model):
     def get_fields_contact_points(self):
         return {'phone', 'mobile', 'email'}
 
-    @api.model
-    def create(self, values):
-        partner = super().create(values)
+    @api.model_create_multi
+    def create(self, vals_list):
+        partners = super().create(vals_list)
         # Force recompute contact points
         # when update fields phone, mobile, email
         # (fields no recompute when insert two or more values)
-        if self.get_fields_contact_points().intersection(values.keys()) and \
-                not self._context.get('compute_contact_points'):
-            partner.with_context(
-                compute_contact_points=True)._compute_contact_points()
-        return partner
+        contact_point_fields = self.get_fields_contact_points()
+        for partner, vals in zip(partners, vals_list):
+            if (
+                    contact_point_fields.intersection(vals.keys())
+                    and not self._context.get('compute_contact_points')
+            ):
+                partner.with_context(
+                    compute_contact_points=True)._compute_contact_points()
+        return partners
 
     def write(self, values):
         result = super().write(values)

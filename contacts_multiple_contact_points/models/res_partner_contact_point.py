@@ -55,10 +55,11 @@ class ResPartnerContactPoint(models.Model):
         return [('partner_id', '=', self.partner_id.id)] \
             + super(ResPartnerContactPoint, self)._get_is_default_domain()
 
-    @api.model
-    def create(self, vals):
-        self._complete_vals(vals)
-        return super(ResPartnerContactPoint, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            self._complete_vals(vals)
+        return super().create(vals_list)
 
     @api.model
     def _complete_vals(self, vals):
