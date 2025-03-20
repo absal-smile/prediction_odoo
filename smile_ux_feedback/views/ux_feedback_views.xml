@@ -28,7 +28,7 @@
                 <field name="conformity_id" />
                 <field name="satisfaction_id" />
                 <field name="feedback" />
-                <field name="url" />
+                <field name="url" widget="url" />
             </search>
         </field>
     </record>
