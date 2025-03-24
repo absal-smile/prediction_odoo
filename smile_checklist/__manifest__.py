@@ -48,6 +48,7 @@ Suggestions & Feedback to: corentin.pouhet-brunerie@smile.fr
             "smile_checklist/static/src/xml/checklist.xml",
         ],
     },
+    "images": ["static/description/banner.gif"],
     "uninstall_hook": "uninstall_hook",
     "installable": True,
 }

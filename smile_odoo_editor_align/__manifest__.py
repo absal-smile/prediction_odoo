@@ -13,6 +13,7 @@
             'smile_odoo_editor_align/static/src/js/align_plugin.js',
         ],
     },
+    "images": ["static/description/banner.gif"],
     "installable": True,
     "application": False,
     "auto_install": True,

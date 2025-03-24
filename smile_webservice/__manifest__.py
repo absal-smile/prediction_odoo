@@ -8,8 +8,9 @@
     "depends": ['web'],
     "author": "Smile",
     "license": 'AGPL-3',
-    "description": """
+    "description": """Add a view to visualize webservice calls from the interface, with input and output values, and replay error calls
     """,
+    "images": ["static/description/banner.gif"],
     "summary": "",
     "website": "http://www.smile.fr",
     "category": 'Tools',
