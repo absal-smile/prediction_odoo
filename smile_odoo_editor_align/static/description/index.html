@@ -370,52 +370,91 @@ ul.auto-toc {
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#requirements" id="id1">Requirements</a></li>
-<li><a class="reference internal" href="#usage" id="id2">Usage</a><ul>
+<li><a class="reference internal" href="#installation" id="id1">Installation</a></li>
+<li><a class="reference internal" href="#requirements" id="id2">Requirements</a></li>
 <li><a class="reference internal" href="#features" id="id3">Features</a></li>
-<li><a class="reference internal" href="#configuration" id="id4">Configuration</a></li>
+<li><a class="reference internal" href="#usage" id="id4">Usage</a><ul>
+<li><a class="reference internal" href="#how-to-use-the-alignment-tools" id="id5">How to Use the Alignment Tools</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#known-issues" id="id5">Known Issues</a></li>
-<li><a class="reference internal" href="#bug-tracker" id="id6">Bug Tracker</a></li>
-<li><a class="reference internal" href="#credits" id="id7">Credits</a><ul>
-<li><a class="reference internal" href="#contributors" id="id8">Contributors</a></li>
-<li><a class="reference internal" href="#maintainer" id="id9">Maintainer</a></li>
+<li><a class="reference internal" href="#configuration" id="id6">Configuration</a></li>
+<li><a class="reference internal" href="#known-issues" id="id7">Known Issues</a></li>
+<li><a class="reference internal" href="#bug-tracker" id="id8">Bug Tracker</a></li>
+<li><a class="reference internal" href="#credits" id="id9">Credits</a><ul>
+<li><a class="reference internal" href="#contributors" id="id10">Contributors</a></li>
+<li><a class="reference internal" href="#maintainer" id="id11">Maintainer</a></li>
 </ul>
 </li>
 </ul>
+</div>
+<div class="section" id="installation">
+<h2><a class="toc-backref" href="#id1">Installation</a></h2>
+<ol class="arabic simple">
+<li>Clone the repository or download the module files.</li>
+<li>Place the <tt class="docutils literal">smile_odoo_editor_align</tt> directory in your Odoo addons path.</li>
+<li>Update the app list in Odoo.</li>
+<li>Install the <tt class="docutils literal">smile_odoo_editor_align</tt> module from the Odoo apps interface.</li>
+</ol>
 </div>
 <div class="section" id="requirements">
-<h2><a class="toc-backref" href="#id1">Requirements</a></h2>
+<h2><a class="toc-backref" href="#id2">Requirements</a></h2>
 <p>There are no specific requirements to use this module.</p>
 </div>
-<div class="section" id="usage">
-<h2><a class="toc-backref" href="#id2">Usage</a></h2>
 <div class="section" id="features">
-<h3><a class="toc-backref" href="#id3">Features</a></h3>
+<h2><a class="toc-backref" href="#id3">Features</a></h2>
 <p>This module adds the following features to the Odoo HTML editor:</p>
 <ul class="simple">
 <li>Align text to the left, center, or right.</li>
-<li>Keyboard shortcuts for quick alignment:
-- <strong>Ctrl+Shift+L</strong>: Align Left
-- <strong>Ctrl+Shift+C</strong>: Align Center
-- <strong>Ctrl+Shift+R</strong>: Align Right
-- <strong>Ctrl+Shift+J</strong>: Justify</li>
+<li>Keyboard shortcuts for quick alignment:<ul>
+<li><strong>Ctrl+Shift+L</strong>: Align Left</li>
+<li><strong>Ctrl+Shift+C</strong>: Align Center</li>
+<li><strong>Ctrl+Shift+R</strong>: Align Right</li>
+<li><strong>Ctrl+Shift+J</strong>: Justify</li>
+</ul>
+</li>
 <li>Toolbar buttons for alignment.</li>
 <li>Powerbox commands for quick access to alignment options.</li>
 </ul>
 </div>
+<div class="section" id="usage">
+<h2><a class="toc-backref" href="#id4">Usage</a></h2>
+<p>Once the module is installed, the alignment tools will be available in the Odoo HTML editor.</p>
+<div class="section" id="how-to-use-the-alignment-tools">
+<h3><a class="toc-backref" href="#id5">How to Use the Alignment Tools</a></h3>
+<ol class="arabic">
+<li><p class="first"><strong>Powerbox Commands</strong>:
+- Open the Powerbox by typing <cite>/</cite> in the editor.
+- Type the desired alignment command (e.g., <cite>/align center</cite>).</p>
+<img alt="Powerbox commands for alignment" src="powerbox_commands.png" style="width: 600px;" />
+</li>
+<li><p class="first"><strong>Toolbar Buttons</strong>:
+- Use the alignment buttons in the toolbar to align text to the left, center, right, or justify.</p>
+<img alt="Toolbar buttons for alignment" src="toolbar_buttons.png" style="width: 600px;" />
+</li>
+<li><p class="first"><strong>Alignment Examples</strong>:
+- <strong>Align Center</strong>:</p>
+<blockquote>
+<img alt="Example of center alignment" src="align_center_example.png" style="width: 600px;" />
+</blockquote>
+<ul>
+<li><p class="first"><strong>Align Right</strong>:</p>
+<img alt="Example of right alignment" src="align_right_example.png" style="width: 600px;" />
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
 <div class="section" id="configuration">
-<h3><a class="toc-backref" href="#id4">Configuration</a></h3>
+<h2><a class="toc-backref" href="#id6">Configuration</a></h2>
 <p>No specific configuration is required. Once the module is installed, the alignment tools will be available in the Odoo HTML editor.</p>
 </div>
-</div>
 <div class="section" id="known-issues">
-<h2><a class="toc-backref" href="#id5">Known Issues</a></h2>
+<h2><a class="toc-backref" href="#id7">Known Issues</a></h2>
 <p>There are no known issues at the moment. If you encounter any problems, please report them on the bug tracker.</p>
 </div>
 <div class="section" id="bug-tracker">
-<h2><a class="toc-backref" href="#id6">Bug Tracker</a></h2>
+<h2><a class="toc-backref" href="#id8">Bug Tracker</a></h2>
 <p>Bugs are tracked on <a class="reference external" href="https://github.com/Smile-SA/odoo_addons/issues">GitHub Issues</a>.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed feedback
@@ -423,15 +462,16 @@ If you spotted it first, help us smashing it by providing a detailed and welcome
 <p>Do not contact contributors directly about support or help with technical issues.</p>
 </div>
 <div class="section" id="credits">
-<h2><a class="toc-backref" href="#id7">Credits</a></h2>
+<h2><a class="toc-backref" href="#id9">Credits</a></h2>
 <div class="section" id="contributors">
-<h3><a class="toc-backref" href="#id8">Contributors</a></h3>
+<h3><a class="toc-backref" href="#id10">Contributors</a></h3>
 <ul class="simple">
-<li>Smile SA Development Team</li>
+<li>Smile</li>
+<li>MOUTASSAREF Hamza</li>
 </ul>
 </div>
 <div class="section" id="maintainer">
-<h3><a class="toc-backref" href="#id9">Maintainer</a></h3>
+<h3><a class="toc-backref" href="#id11">Maintainer</a></h3>
 <p>This module is maintained by Smile SA.</p>
 <p>Since 1991 Smile has been a pioneer of technology and also the European expert in open source solutions.</p>
 </div>

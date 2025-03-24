@@ -19,31 +19,74 @@ This module provides alignment tools for the Odoo HTML editor, allowing users to
    :local:
 
 
+Installation
+============
+
+1. Clone the repository or download the module files.
+2. Place the ``smile_odoo_editor_align`` directory in your Odoo addons path.
+3. Update the app list in Odoo.
+4. Install the ``smile_odoo_editor_align`` module from the Odoo apps interface.
+
 Requirements
 ============
 
 There are no specific requirements to use this module.
 
-
-Usage
-=====
-
 Features
---------
+========
 
 This module adds the following features to the Odoo HTML editor:
 
-* Align text to the left, center, or right.
-* Keyboard shortcuts for quick alignment:
+- Align text to the left, center, or right.
+- Keyboard shortcuts for quick alignment:
+
   - **Ctrl+Shift+L**: Align Left
   - **Ctrl+Shift+C**: Align Center
   - **Ctrl+Shift+R**: Align Right
   - **Ctrl+Shift+J**: Justify
-* Toolbar buttons for alignment.
-* Powerbox commands for quick access to alignment options.
+
+- Toolbar buttons for alignment.
+- Powerbox commands for quick access to alignment options.
+
+Usage
+=====
+Once the module is installed, the alignment tools will be available in the Odoo HTML editor.
+
+How to Use the Alignment Tools
+------------------------------
+
+1. **Powerbox Commands**:
+   - Open the Powerbox by typing `/` in the editor.
+   - Type the desired alignment command (e.g., `/align center`).
+   
+   .. image:: static/description/powerbox_commands.png
+      :alt: Powerbox commands for alignment
+      :width: 600px
+
+2. **Toolbar Buttons**:
+   - Use the alignment buttons in the toolbar to align text to the left, center, right, or justify.
+   
+   .. image:: static/description/toolbar_buttons.png
+      :alt: Toolbar buttons for alignment
+      :width: 600px
+
+3. **Alignment Examples**:
+   - **Align Center**:
+     
+     .. image:: static/description/align_center_example.png
+        :alt: Example of center alignment
+        :width: 600px
+
+   - **Align Right**:
+     
+     .. image:: static/description/align_right_example.png
+        :alt: Example of right alignment
+        :width: 600px
+
+
 
 Configuration
--------------
+=============
 
 No specific configuration is required. Once the module is installed, the alignment tools will be available in the Odoo HTML editor.
 
@@ -71,7 +114,8 @@ Credits
 Contributors
 ------------
 
-* Smile SA Development Team
+* Smile
+* MOUTASSAREF Hamza
 
 Maintainer
 ----------
