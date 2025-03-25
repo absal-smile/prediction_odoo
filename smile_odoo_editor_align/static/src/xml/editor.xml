@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="web_editor_toolbar_inherit" inherit_id="web_editor.toolbar">
+        <xpath expr="//div[@id='decoration']" position="after">
+            <div id="custom-align" class="btn-group">
+                <div id="align-left" data-call="alignLeft" title="Align Left" class="btn fa fa-align-left fa-fw"></div>
+                <div id="align-center" data-call="alignCenter" title="Align Center" class="btn fa fa-align-center fa-fw"></div>
+                <div id="align-right" data-call="alignRight" title="Align Right" class="btn fa fa-align-right fa-fw"></div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
