@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# (C) 2019 Smile (<http://www.smile.eu>)
+# (C) 2025 Smile (<http://www.smile.eu>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 
@@ -66,12 +66,14 @@ class Testdocumentaccess(TransactionCase):
                 (4, self.group_can_create.id),
                 (4, self.env.ref('base.group_system').id)
             ],
+            
         })
 
         self.user_cannot_create = self.user_obj.create({
             'name': 'User Cannot create',
             'login': 'UCNC',
             'groups_id': [(6, 0, self.group_cannot_create.ids)],
+
         })
 
         self.date_today = fields.Datetime.now()

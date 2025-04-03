@@ -1,8 +1,5 @@
-# -*- encoding: utf-8 -*-
-##############################################################################
-#
 # -*- coding: utf-8 -*-
-# (C) 2019 Smile (<http://www.smile.eu>)
+# (C) 2025 Smile (<http://www.smile.eu>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
@@ -25,17 +22,15 @@ class IrAttachementType(models.Model):
 
     def unlink(self):
         if self._context.get('force_unlink_doc_type'):
-            return super(IrAttachementType, self).unlink()
+            return super().unlink()
         raise UserError(_('Attention : You cannot unlink document type!'))
 
     def copy(self, default=None):
         self.ensure_one()
-        if default is None:
-            default = {}
-        if default.get('ir_attachmentname', '') in ['', self.name]:
-            default['name'] = self.name + _(' (copy)')
-        return super(IrAttachementType, self).copy(default)
-
+        default = default or {}
+        if not default.get('name'):
+            default['name'] = _("%s (copy)", self.name)
+        return super().copy(default)
 
 class IrAttachement(models.Model):
     _name = 'ir.attachment'
@@ -52,26 +47,22 @@ class IrAttachement(models.Model):
         today = fields.Date.today()
         for doc in self:
             status = 'valid'
-            if doc.expiry_date and not doc.archived:
-                if doc.expiry_date >= today:
-                    status = 'valid'
-                elif doc.expiry_date < today:
-                    status = 'expired'
             if doc.archived:
                 status = 'archived'
                 if doc.expiry_date and doc.expiry_date > today:
                     doc.expiry_date = today
+            elif doc.expiry_date:
+                status = 'valid' if doc.expiry_date >= today else 'expired'
             if doc.status != status:
                 doc.status = status
-
-    @api.model
-    def create(self, values):
-        record = super(IrAttachement, self).create(values)
-        record._compute_document_status()
-        return record
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records._compute_document_status()
+        return records
 
     def write(self, values):
-        res = super(IrAttachement, self).write(values)
+        res = super().write(values)
         self._compute_document_status()
         return res
 

@@ -62,14 +62,14 @@
 	       <field name="model">ir.attachment</field>
 	       <field name="priority">0</field>
 	       <field name="arch" type="xml">
-	           <tree string="Documents" decoration-danger="status=='expired'" decoration-success="status=='valid'">
+	           <list string="Documents" decoration-danger="status=='expired'" decoration-success="status=='valid'">
 	               <field name="document_type_id"/>
 	               <field name="create_date"/>
 	               <field name="write_date" string="Write Date"/>
 	               <field name="document_date"/>
 	               <field name="expiry_date"/>
 	               <field name="status"/>
-	           </tree>
+	           </list>
 	       </field>
 	   </record>
 
@@ -113,13 +113,13 @@
 	        <field name="name">Documents</field>
 	        <field name="type">ir.actions.act_window</field>
 	        <field name="res_model">ir.attachment</field>
-	        <field name="view_mode">tree,form</field>
+	        <field name="view_mode">list,form</field>
 	        <field name="search_view_id" ref="view_document_search"/>
 	    </record>
 
 	    <record id="action_document_tree" model="ir.actions.act_window.view">
 	        <field eval="1" name="sequence"/>
-	        <field name="view_mode">tree</field>
+	        <field name="view_mode">list</field>
 	        <field name="view_id" ref="view_document_tree"/>
 	        <field name="act_window_id" ref="action_document"/>
 	    </record>
@@ -149,12 +149,12 @@
         </record>
 
         <record id="view_document_type_tree" model="ir.ui.view">
-            <field name="name">ir.attachment.type.tree</field>
+            <field name="name">ir.attachment.type.list</field>
             <field name="model">ir.attachment.type</field>
             <field name="arch" type="xml">
-                <tree string="Documents types">
+                <list string="Documents types">
                     <field name="name"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -172,7 +172,7 @@
             <field name="name">Documents types</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ir.attachment.type</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="view_document_type_search"/>
         </record>
 
