@@ -37,12 +37,12 @@
                                 </group>
                                 <group>
                                     <field name="notification_ids">
-                                        <tree>
+                                        <list>
                                             <field name="res_partner_id"/>
                                             <field name="is_read"/>
                                             <field name="notification_type"/>
                                             <field name="notification_status"/>
-                                        </tree>
+                                        </list>
                                     </field>
                                 </group>
                             </page>
@@ -52,13 +52,13 @@
             </field>
         </record>
 
-        <!-- mail.message simple tree -->
+        <!-- mail.message simple list -->
         <record model="ir.ui.view" id="view_message_tree_partner_mail_history">
-            <field name="name">mail.message.tree.partner.mail.history</field>
+            <field name="name">mail.message.list.partner.mail.history</field>
             <field name="model">mail.message</field>
             <field name="priority">100</field>
             <field name="arch" type="xml">
-                <tree string="Messages" create="false" edit="false" delete="false" class="mail_message_tree">
+                <list string="Messages" create="false" edit="false" delete="false" class="mail_message_tree">
                     <field name="date"/>
                     <field name="subject"/>
                     <field name="author_id"/>
@@ -67,7 +67,7 @@
                     <field name="subtype_id"/>
                     <field name="partner_ids" widget="many2many_tags"/>
                     <field name="attachment_ids" widget="many2many_binary"/>
-                </tree>
+                </list>
             </field>
         </record>
 

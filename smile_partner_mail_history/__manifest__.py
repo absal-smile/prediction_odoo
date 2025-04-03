@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# (C) 2020 Smile (<http://www.smile.fr>)
+# (C) 2025 Smile (<http://www.smile.fr>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 {
     "name": "Smile Partner Mail History",
-    "version": "17.0.0.1.0",
+    "version": "18.0.0.1.0",
     "depends": [
         "web",
         "mail",
@@ -16,13 +16,8 @@
     "website": "",
     "category": "Discuss",
     "data": [
-        # Security
-        # Data
-        # Reports
-        # Views
         'views/mail_message_views.xml',
         'views/res_partner_views.xml',
-        # Wizard
     ],
     "demo": [
     ],
@@ -30,7 +25,7 @@
     ],
     "assets": {
         "web.assets_backend": [
-            'smile_partner_mail_history/static/src/scss/partner_mail_history.scss',
+            'smile_partner_mail_history/static/src/scss/partner_mail_history.scss',  # noqa 501
         ],
     },
     "auto_install": False,

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# (C) 2020 Smile (<http://www.smile.fr>)
+# (C) 2025 Smile (<http://www.smile.fr>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.exceptions import UserError
 
 MAIL_MESSAGE_TYPES = ('email', 'comment', 'notification', 'user_notification')
 
@@ -26,20 +27,29 @@ class ResPartner(models.Model):
         Show all received mail.message for a specific partner
         """
         self.ensure_one()
-        action = self.env.ref('mail.action_view_mail_message')
-        result = action.read()[0]
-        result['views'] = [
-            (self.env.ref(
-                'smile_partner_mail_history.'
-                'view_message_tree_partner_mail_history').id,
-                'tree'),
-            (self.env.ref(
-                'smile_partner_mail_history.'
-                'view_message_form_partner_mail_history').id,
-                'form'),
-        ]
-        result['domain'] = [
+        messages = self.env['mail.message'].search_count([
             ('message_type', 'in', MAIL_MESSAGE_TYPES),
             ('partner_ids', 'in', self.ids)
-        ]
+        ])
+        if not messages:
+            raise UserError(f"This partner {self.name} does not have any messages history!")
+
+        action = self.env.ref('mail.action_view_mail_message')
+        result = action.read()[0]
+        result.update({
+            'views': [
+                (self.env.ref(
+                    'smile_partner_mail_history.'
+                    'view_message_tree_partner_mail_history').id,
+                'list'),
+                (self.env.ref(
+                    'smile_partner_mail_history.'
+                    'view_message_form_partner_mail_history').id,
+                'form'),
+            ],
+            'domain': [
+                ('message_type', 'in', MAIL_MESSAGE_TYPES),
+                ('partner_ids', 'in', self.ids)
+            ]
+        })
         return result

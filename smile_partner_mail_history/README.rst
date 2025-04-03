@@ -6,7 +6,7 @@ Smile Partner Mail History
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-Smile_SA%2Fodoo_addons-lightgray.png?logo=github
-   :target: https://github.com/Smile-SA/odoo_addons/tree/13.0/smile_partner_mail_history
+   :target: https://github.com/Smile-SA/odoo_addons/tree/18.0/smile_partner_mail_history
    :alt: Smile-SA/odoo_addons
 
 |badge2| |badge3|
