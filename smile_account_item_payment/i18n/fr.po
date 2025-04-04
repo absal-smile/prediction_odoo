@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0\n"
+"Project-Id-Version: Odoo Server 18.0-20250218\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-23 09:15+0000\n"
-"PO-Revision-Date: 2023-03-23 09:15+0000\n"
+"POT-Creation-Date: 2025-04-04 08:18+0000\n"
+"PO-Revision-Date: 2025-04-04 08:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -24,6 +24,5 @@ msgstr "Écriture comptable"
 #. odoo-python
 #: code:addons/smile_account_item_payment/models/account_move_line.py:0
 #: model:ir.actions.server,name:smile_account_item_payment.action_account_line_invoice_from_list
-#, python-format
-msgid "Register Payment"
+msgid "Register payment"
 msgstr "Enregistrer un paiement"
