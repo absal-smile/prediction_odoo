@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# (C) 2021 Smile (<http://www.smile.fr>)
+# (C) 2025 Smile (<http://www.smile.fr>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import models, fields
 
