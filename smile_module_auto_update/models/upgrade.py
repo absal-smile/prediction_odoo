@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 native_post_load = UpgradeManager.post_load
 
 
-def post_load(self):
+def post_load(self, registry=None):
     """
     Save checksums of all installed modules in db creation mode.
     Do nothing if module module_auto_update is not installed,

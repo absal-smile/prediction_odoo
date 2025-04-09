@@ -2,17 +2,16 @@
 
 import logging
 
-from odoo import api, SUPERUSER_ID
-
 _logger = logging.getLogger(__name__)
 
 
-def post_init(cr, registry):
-    save_installed_checksums(cr, registry)
+def post_init(env):
+    """Post-init hook called by Odoo after module installation."""
+    save_installed_checksums(env)
 
 
-def save_installed_checksums(cr, registry):
-    env = api.Environment(cr, SUPERUSER_ID, {})
+def save_installed_checksums(env):
+    """Save checksums of all installed modules."""
     IrModuleModule = env['ir.module.module']
     # TODO: save checksum only if module is installed *after*
     # database initialization via smile_upgrade
