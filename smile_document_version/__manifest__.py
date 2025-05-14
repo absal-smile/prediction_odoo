@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# (C) 2019 Smile (<http://www.smile.eu>)
+# (C) 2025 Smile (<http://www.smile.eu>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 {
     'name': 'Smile Document Version',
-    'version': '1.0',
+    'version': '18.0.0.0.0',
     'depends': [
-        'attachment_indexation', 'smile_document'
+        'smile_document'
     ],
     'author': 'Smile',
     'description': """
@@ -24,4 +24,5 @@
     'auto_install': False,
     'installable': True,
     'application': False,
+    'license': 'AGPL-3',
 }
