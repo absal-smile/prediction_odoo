@@ -1,7 +1,11 @@
-from werkzeug.utils import redirect
+# -*- coding: utf-8 -*-
+# (C) 2025 Smile (<http://www.smile.eu>)
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+import base64
+
 from odoo import http, _
 from odoo.http import request
-import base64
+from werkzeug.utils import redirect
 
 
 class WebsiteAttachmentPage(http.Controller):

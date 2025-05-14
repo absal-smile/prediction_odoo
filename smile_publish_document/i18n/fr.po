@@ -23,13 +23,13 @@ msgstr "Pièce jointe"
 #. module: smile_publish_document
 #: model:website.menu,name:smile_publish_document.menu_attachments
 msgid "Documents"
-msgstr ""
+msgstr "Documents"
 
 #. module: smile_publish_document
 #. odoo-python
 #: code:addons/smile_publish_document/controllers/main.py:0
 msgid "Others"
-msgstr ""
+msgstr "Autres"
 
 #. module: smile_publish_document
 #: model:ir.model.fields,field_description:smile_publish_document.field_ir_attachment__website_published
