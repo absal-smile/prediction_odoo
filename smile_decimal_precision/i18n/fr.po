@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0\n"
+"Project-Id-Version: Odoo Server 18.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-14 08:16+0000\n"
-"PO-Revision-Date: 2025-04-14 08:16+0000\n"
+"POT-Creation-Date: 2025-05-15 08:50+0000\n"
+"PO-Revision-Date: 2025-05-15 08:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,17 +28,17 @@ msgstr "Précision décimale"
 #. module: smile_decimal_precision
 #: model:ir.model.fields,field_description:smile_decimal_precision.field_res_currency__display_decimal_places
 msgid "Display Decimal Places"
-msgstr ""
+msgstr "Afficher les décimales"
 
 #. module: smile_decimal_precision
 #: model:ir.model.fields,field_description:smile_decimal_precision.field_decimal_precision__display_digits
 msgid "Display Digits"
-msgstr ""
+msgstr "Afficher les chiffres"
 
 #. module: smile_decimal_precision
 #: model:ir.model.fields,field_description:smile_decimal_precision.field_res_currency__display_rounding
 msgid "Display Rounding Factor"
-msgstr ""
+msgstr "Afficher le facteur d'arrondi"
 
 #. module: smile_decimal_precision
 #: model:ir.model,name:smile_decimal_precision.model_ir_http
