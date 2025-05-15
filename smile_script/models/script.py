@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# (C) 2019 Smile (<http://www.smile.fr>)
+# (C) 2025 Smile (<http://www.smile.fr>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import logging
@@ -41,7 +41,7 @@ class SmileScript(models.Model):
                                          readonly=True)
     name = fields.Char(required=True)
     description = fields.Text()
-    type = fields.Selection(  # noqa E501
+    type = fields.Selection(
         [
             ("python", "Python"),
             ("sql", "SQL"),
@@ -81,16 +81,15 @@ class SmileScript(models.Model):
         if not vals:
             return True
         if "validated" in self.mapped(
-            "state"
+                "state"
         ) and not SmileScript._can_write_after_validation(vals):
             raise UserError(_("You can only modify draft scripts!"))
-        return super(SmileScript, self).write(vals)
+        return super().write(vals)
 
     def unlink(self):
         if "validated" in self.mapped("state"):
             raise UserError(_("You can only delete draft scripts!"))
-        self.mapped("intervention_ids").unlink()
-        return super(SmileScript, self).unlink()
+        return super().unlink()
 
     def validate(self):
         if "validated" in self.mapped("state"):
@@ -113,7 +112,7 @@ class SmileScript(models.Model):
             return self._run_python(logger)
         raise NotImplementedError(self.type)
 
-    def run(self):  # noqa E501
+    def run(self):
         self.ensure_one()
 
         Intervention = self.env["smile.script.intervention"]
@@ -200,5 +199,13 @@ class SmileScript(models.Model):
         stringio = StringIO(self.code)
         stringio.name = self.name
 
-        convert_xml_import(self._cr, __package__, stringio)
+        try:
+            # Use self.env instead of self.env.cr
+            _logger.info("Starting XML import")
+            convert_xml_import(self.env, __package__, stringio)
+            _logger.info("XML import completed successfully")
+        except Exception as e:
+            _logger.error(f"Error during XML import: {str(e)}")
+            raise
+
         return "No expected result"

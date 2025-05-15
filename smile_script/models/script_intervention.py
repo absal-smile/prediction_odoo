@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-# (C) 2019 Smile (<http://www.smile.fr>)
+# (C) 2025 Smile (<http://www.smile.fr>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import logging
 
 from odoo import api, fields, models, SUPERUSER_ID, _
 from odoo.exceptions import UserError
 from odoo.modules.registry import Registry
-
-
-_logger = logging.getLogger(__name__)
 
 
 def state_cleaner(method):
@@ -24,6 +20,7 @@ def state_cleaner(method):
                     [('state', '=', 'running')]). \
                     write({'state': 'exception'})
         return res
+
     return wrapper
 
 
@@ -34,6 +31,12 @@ class ScriptIntervention(models.Model):
     _order = 'create_date DESC'
 
     _state_cleaner = True
+    script_id = fields.Many2one(
+        "smile.script",
+        "Script",
+        required=True,
+        ondelete='cascade'
+    )
 
     @api.model
     def _setup_complete(self):
@@ -64,4 +67,4 @@ class ScriptIntervention(models.Model):
     def unlink(self):
         if not all(self.mapped('test_mode')):
             raise UserError(_('Intervention cannot be deleted'))
-        return super(ScriptIntervention, self).unlink()
+        return super().unlink()

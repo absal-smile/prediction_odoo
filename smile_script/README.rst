@@ -51,6 +51,16 @@ To create, test and validate a maintenance script:
 .. figure:: static/description/create_test_validate_script.png
    :alt: Create, test and validate a script
    :width: 900px
+.. figure:: static/description/python_test.png
+   :alt: Create, test and validate a python script
+   :width: 900px
+.. figure:: static/description/sql_test.png
+   :alt: Create, test and validate a sql script
+   :width: 900px
+.. figure:: static/description/xml_test.png
+   :alt: Create, test and validate a xml script
+   :width: 900px
+
 
 To execute a script and display results:
 
@@ -64,6 +74,10 @@ To execute a script and display results:
 .. figure:: static/description/display_interventions.png
    :alt: Display interventions
    :width: 900px
+.. figure:: static/description/intervention_manage.png
+   :alt: Display interventions xml/python/sql
+   :width: 900px
+
 
 To track logs of maintenance interventions:
 
@@ -72,7 +86,9 @@ To track logs of maintenance interventions:
 .. figure:: static/description/track_interventions_log.png
    :alt: Track intervention's log
    :width: 900px
-
+.. figure:: static/description/logs.png
+   :alt: Track intervention's xml/python/sql logs
+   :width: 900px
 Bug Tracker
 ===========
 
@@ -93,7 +109,7 @@ Credits
 
 Contributors
 ------------
-
+* Smile Devlopment Team 
 * Corentin POUHET-BRUNERIE
 * Courtois Martin
 
