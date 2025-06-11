@@ -11,7 +11,7 @@
     'license': 'AGPL-3',
     'author': 'Smile',
     'website': 'https://www.smile.eu',
-    'images': ['static/description/icon.png'],
+    'images': ['static/description/banner.gif'],
     'depends': [
         'account',
     ],

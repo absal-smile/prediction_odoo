@@ -26,6 +26,7 @@
         'data/ir_cron.xml',
     ],
     'demo_xml': [],
+    "images": ["static/description/banner.gif"],
     'test': [],
     'auto_install': False,
     'installable': True,

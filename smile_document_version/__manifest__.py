@@ -20,6 +20,7 @@
         'views/document_view.xml',
     ],
     'demo_xml': [],
+    "images": ["static/description/banner.gif"],
     'test': [],
     'auto_install': False,
     'installable': True,

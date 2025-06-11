@@ -20,6 +20,7 @@
         'views/menu.xml',
         'views/res_company_views.xml',
     ],
+    "images": ["static/description/banner.gif"],
     "auto_install": False,
     "installable": True,
     "application": False,

@@ -16,6 +16,7 @@
     'sequence': -1,
     'data': [
     ],
+    "images": ["static/description/banner.gif"],
     'auto_install': True,
     'installable': True,
     'application': False,

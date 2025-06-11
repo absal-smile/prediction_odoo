@@ -28,6 +28,7 @@
             'smile_partner_mail_history/static/src/scss/partner_mail_history.scss',  # noqa 501
         ],
     },
+    "images": ["static/description/banner.gif"],
     "auto_install": False,
     "installable": True,
     "application": True,

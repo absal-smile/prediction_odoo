@@ -13,5 +13,6 @@
     "data": [
     ],
     "demo": [],
+    "images": ["static/description/banner.gif"],
     "installable": True,
 }
