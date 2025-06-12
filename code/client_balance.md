@@ -185,98 +185,8 @@ def get_balance_client(env, account, devise):
 - **Risque** : Impact sur les performances
   - **Mitigation** : Ajouter des métriques de temps de réponse et surveiller attentivement
 
-## 6. Code complet après migration
 
-```python
-# File: /home/smile/Bureau/workspace/loomis/loomis-addons/loomis_client_account/tools/client_balance.py
-
-import logging
-import requests
-import base64
-from odoo.tools import config
-
-_logger = logging.getLogger(__name__)
-
-
-def _get_account_auth(env):
-    username = env["ir.config_parameter"].sudo().get_param(
-        "loomis_partner.client_balance_username")
-    password = env["ir.config_parameter"].sudo().get_param(
-        "loomis_partner.client_balance_password")
-    if not username or not password:
-        _logger.error("Username or Password doesn't exist")
-    return username, password
-
-
-def _get_client_balance_environment(env):
-    client_balance_environment = env["ir.config_parameter"].sudo().get_param(
-        "loomis_partner.client_balance_environment")
-    if not client_balance_environment:
-        _logger.error("Client balance environment doesn't exist")
-    return client_balance_environment
-
-
-def _get_auth_headers(env):
-    """
-    Crée les en-têtes d'authentification pour l'API REST.
-    Remplace la logique d'authentification NTLM par des en-têtes HTTP standards.
-    """
-    username, password = _get_account_auth(env)
-    
-    # Option 1: Basic Auth
-    auth_str = f"{username}:{password}"
-    auth_bytes = auth_str.encode('ascii')
-    auth_b64 = base64.b64encode(auth_bytes).decode('ascii')
-    return {
-        "Authorization": f"Basic {auth_b64}",
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-    
-    # Option 2 (alternative): Bearer Token
-    # token = _get_token(env, username, password)
-    # return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-
-
-def _build_balance_url(env, company, account, currency):
-    """
-    Construit l'URL REST pour l'API de solde client.
-    Remplace la création du client SOAP par la construction d'une URL REST.
-    """
-    base_url = env["ir.config_parameter"].sudo().get_param(
-        "loomis_partner.client_balance_api_base_url", 
-        "https://uat-apps.cprb.fr/crow.api")
-    return f"{base_url}/accounting/balance/{company}/{account}/{currency}"
-
-
-def get_balance_client(env, account, devise):
-    """
-    Récupère le solde client via l'API REST.
-    Conserve la même signature et comportement externe, mais utilise REST au lieu de SOAP.
-    """
-    response = 0
-    if config.get('enable_import_client_balance'):
-        headers = _get_auth_headers(env)
-        company = _get_client_balance_environment(env)
-        url = _build_balance_url(env, company, account, devise)
-        
-        try:
-            api_response = requests.get(url, headers=headers, timeout=10)
-            if api_response.status_code == 200:
-                data = api_response.json()
-                # Adapter selon la structure réelle de la réponse JSON
-                response = data.get("balance", 0)
-            else:
-                _logger.error(f"Error on API of import Balance client: HTTP {api_response.status_code}")
-                if api_response.text:
-                    _logger.error(f"Response details: {api_response.text[:200]}")
-        except Exception as e:
-            _logger.error(f"Error on API of import Balance client: {str(e)}")
-    
-    return response
-```
-
-## 7. Améliorations futures possibles
+## 6. Améliorations futures possibles
 
 ### Cache
 ```python
@@ -314,7 +224,7 @@ def get_balance_client(env, account, devise):
     return response
 ```
 
-## 8. Conclusion
+## 7. Conclusion
 
 Cette migration de SOAP vers REST pour l'API Balance Client présente plusieurs avantages :
 
