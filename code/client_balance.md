@@ -233,4 +233,114 @@ Cette migration de SOAP vers REST pour l'API Balance Client présente plusieurs 
 3. **Robustesse** : Meilleure gestion des erreurs et des timeouts
 4. **Modernisation** : Alignement sur les standards actuels d'API
 
+-----
+
+# Mise à jour des paramètres de configuration pour la migration REST
+
+Pour compléter la migration SOAP vers REST, vous devez mettre à jour les paramètres de configuration dans les fichiers XML. Voici les modifications nécessaires pour les deux fichiers que vous avez identifiés.
+
+## 1. Mise à jour du fichier de paramètres de configuration
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Ancien paramètre SOAP - à conserver temporairement pour compatibilité -->
+        <record id="client_balance_api" model="ir.config_parameter">
+            <field name="key">loomis_partner.client_balance_api</field>
+            <field name="value">http://appint.cprb.fr/Scribux/Svc/Unit4CodaService.svc?wsdl</field>
+        </record>
+        
+        <!-- Nouveau paramètre REST - URL de base de l'API -->
+        <record id="client_balance_api_base_url" model="ir.config_parameter">
+            <field name="key">loomis_partner.client_balance_api_base_url</field>
+            <field name="value">https://uat-apps.cprb.fr/crow.api</field>
+        </record>
+        
+        <!-- Paramètre d'environnement - conservé et toujours utilisé -->
+        <record id="client_balance_environment" model="ir.config_parameter">
+            <field name="key">loomis_partner.client_balance_environment</field>
+            <field name="value">ztest6</field>
+        </record>
+    </data>
+</odoo>
+```
+
+## 2. Le cron reste inchangé
+
+Le cron que vous avez identifié n'a pas besoin d'être modifié car il appelle simplement la méthode `_import_balance_client()` sur le modèle `res_partner`. C'est cette méthode qui utilise la fonction `get_balance_client()` que nous avons migrée.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ir_cron_balance_client" model="ir.cron">
+        <field name="name">Balance Client Import</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall"
+               eval="(DateTime.now().replace(hour=5, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')" />
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="code">model._import_balance_client()</field>
+        <field name="state">code</field>
+    </record>
+</odoo>
+```
+
+## 3. Stratégie de déploiement des paramètres
+
+Pour une migration en douceur, je recommande la stratégie suivante :
+
+1. **Phase 1 : Préparation**
+   - Ajouter le nouveau paramètre `loomis_partner.client_balance_api_base_url`
+   - Conserver l'ancien paramètre `loomis_partner.client_balance_api`
+   - Déployer le nouveau code qui utilise l'API REST
+
+2. **Phase 2 : Validation**
+   - Vérifier que les soldes clients sont correctement importés
+   - Comparer les résultats avec l'ancienne implémentation si possible
+   - Résoudre les éventuels problèmes
+
+3. **Phase 3 : Nettoyage (après validation complète)**
+   - Supprimer l'ancien paramètre `loomis_partner.client_balance_api`
+   - Mettre à jour la documentation
+
+## 4. Paramètres pour l'API Reuters
+
+De la même manière, vous devrez mettre à jour les paramètres pour l'API Reuters. Si vous avez un fichier similaire pour cette API, voici comment il devrait être modifié :
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Ancien paramètre SOAP - à conserver temporairement pour compatibilité -->
+        <record id="reuters_rate_api" model="ir.config_parameter">
+            <field name="key">loomis_sale.reuters_rate_api</field>
+            <field name="value">http://appint.cprb.fr/Scribux/Svc/ReutersService.svc?wsdl</field>
+        </record>
+        
+        <!-- Nouveau paramètre REST - URL de base de l'API -->
+        <record id="reuters_rate_api_base_url" model="ir.config_parameter">
+            <field name="key">loomis_sale.reuters_rate_api_base_url</field>
+            <field name="value">https://uat-apps.cprb.fr/crow.api</field>
+        </record>
+    </data>
+</odoo>
+```
+
+## 5. Considérations importantes
+
+### Environnements multiples
+Assurez-vous que les valeurs des URLs sont correctes pour chaque environnement (développement, test, production). Vous pourriez avoir besoin de différentes configurations pour chaque environnement.
+
+### Sécurité
+Vérifiez que les nouvelles URLs utilisent HTTPS pour une communication sécurisée, surtout si elles transmettent des informations sensibles.
+
+### Monitoring
+Après le déploiement, surveillez attentivement les logs pour détecter d'éventuelles erreurs liées aux appels API.
+
+### Documentation
+Mettez à jour la documentation interne pour refléter ces changements de configuration, afin que les futurs développeurs comprennent la structure.
+
+Ces modifications de configuration complètent la migration du code que nous avons effectuée précédemment, en garantissant que le système pointe vers les bonnes URLs d'API REST.
+
 Le risque est minimisé par le fait que la fonction principale conserve la même signature, ce qui évite tout impact sur le code appelant. L'authentification représente le principal défi de cette migration et devra être adaptée selon les spécifications exactes de la nouvelle API REST.
