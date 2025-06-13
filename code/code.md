@@ -3,7 +3,7 @@
 ## 1. Fichier client_balance.py (API Balance Client)
 
 ```python
-# File: /path/to/client_balance.py
+# File: /home/smile/Bureau/workspace/loomis/loomis-addons/loomis_client_account/tools/client_balance.py
 import logging
 import requests
 from odoo.tools import config
@@ -72,77 +72,30 @@ def get_balance_client(env, account, devise):
 
 ```python
 # File: /path/to/res_partner.py
-from odoo import models, api
-from odoo.addons.loomis_partner.tools import client_balance
+from odoo import fields, models, _
+import logging
+from ..tools import client_balance
+
+_logger = logging.getLogger(__name__)
+
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    def get_account_balance(self, account):
-        """
-        Récupère le solde d'un compte client spécifique à la demande.
-        """
-        if not account:
-            return 0
-        
-        balance = client_balance.get_balance_client(
-            self.env, account.name, account.currency_id.name)
-        
-        # Mettre à jour le solde dans l'enregistrement
-        if hasattr(account, 'write'):
-            account.write({'balance': balance})
-        
-        return balance
+    client_account_ids = fields.One2many(
+        'client.account', 'partner_id', 'Client accounts')
+
+    def _import_balance_client(self):
+        accounts = self.env['client.account'].search([])
+        _logger.info(f"Starting balance import for {len(accounts)} accounts.")
+        for account in accounts:
+            account.balance = client_balance.get_balance_client(
+                self.env, account.name, account.currency_id.name)
+        _logger.info("Balance import done.")
+        return accounts
 ```
 
-## 3. Fichier client_account.py (Modèle Compte Client)
-
-```python
-# File: /path/to/client_account.py
-from odoo import models, api
-
-class ClientAccount(models.Model):
-    _inherit = 'client.account'
-
-    def refresh_balance(self):
-        """
-        Rafraîchit le solde du compte client.
-        """
-        for account in self:
-            self.env['res.partner'].get_account_balance(account)
-        return True
-    
-    @api.model
-    def get_view(self, view_id=None, view_type='form', **options):
-        res = super().get_view(view_id=view_id, view_type=view_type, **options)
-        if view_type == 'form':
-            # Rafraîchir le solde lors de l'ouverture du formulaire
-            if self:
-                self.env['res.partner'].get_account_balance(self)
-        return res
-```
-
-## 4. Fichier client_account_view.xml (Vue Compte Client)
-
-```xml
-<!-- File: /path/to/client_account_view.xml -->
-<odoo>
-    <record id="view_client_account_form" model="ir.ui.view">
-        <field name="name">client.account.form</field>
-        <field name="model">client.account</field>
-        <field name="inherit_id" ref="loomis_partner.view_client_account_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//sheet" position="before">
-                <header>
-                    <button name="refresh_balance" string="Rafraîchir le solde" type="object" class="oe_highlight"/>
-                </header>
-            </xpath>
-        </field>
-    </record>
-</odoo>
-```
-
-## 5. Fichier ir_config_parameter.xml (API Balance Client)
+## 3. Fichier ir_config_parameter.xml (API Balance Client)
 
 ```xml
 <!-- File: /path/to/ir_config_parameter.xml -->
@@ -164,7 +117,7 @@ class ClientAccount(models.Model):
 </odoo>
 ```
 
-## 6. Fichier reuters.py (API Reuters)
+## 4. Fichier reuters.py (API Reuters)
 
 ```python
 # File: /path/to/reuters.py
@@ -256,7 +209,7 @@ def get_course_change_reuters(
         return 0
 ```
 
-## 7. Fichier res_currency.py (Modèle Currency)
+## 5. Fichier res_currency.py (Modèle Currency)
 
 ```python
 # File: /path/to/res_currency.py
@@ -295,7 +248,7 @@ class ResCurrency(models.Model):
         return result
 ```
 
-## 8. Fichier ir_config_parameter.xml (API Reuters)
+## 6. Fichier ir_config_parameter.xml (API Reuters)
 
 ```xml
 <!-- File: /path/to/ir_config_parameter.xml -->
@@ -322,7 +275,7 @@ class ResCurrency(models.Model):
 </odoo>
 ```
 
-## 9. Fichier sale_order.py (Modèle Sale Order)
+## 7. Fichier sale_order.py (Modèle Sale Order)
 
 ```python
 # File: /path/to/sale_order.py
@@ -358,7 +311,7 @@ class SaleOrder(models.Model):
         self.order_currency_reuters_rate_serialized = json.dumps(combined_rates)
 ```
 
-## 10. Fichier sale_order_line.py (Modèle Sale Order Line)
+## 8. Fichier sale_order_line.py (Modèle Sale Order Line)
 
 ```python
 # File: /path/to/sale_order_line.py
