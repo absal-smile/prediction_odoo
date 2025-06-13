@@ -1,4 +1,3 @@
-
 # Documentation technique : Migration des APIs SOAP vers REST
 
 ## 1. Contexte et objectifs
@@ -70,6 +69,8 @@ Cette migration vise à :
 ### 4.3 Nouvelles fonctions
 - `_build_rate_url` : Construit l'URL REST pour l'API de taux de change
 - `_get_rate_from_api` : Récupère le taux depuis l'API REST
+- `get_reuters_rate` : Méthode du modèle res.currency pour récupérer un taux en temps réel
+- `get_reuters_rates_data` : Méthode du modèle res.currency pour générer les données de taux
 
 ### 4.4 Fonction principale modifiée
 - `get_course_change_reuters` : Fonction principale qui récupère le taux de change
@@ -77,7 +78,18 @@ Cette migration vise à :
   - Remplace l'appel SOAP par une requête HTTP GET
   - Améliore la gestion des erreurs et le logging
 
-### 4.5 Paramètres de configuration
+### 4.5 Méthodes modifiées dans les modèles
+- `_onchange_currency_reuters_rate_serialized` (modèle sale.order) :
+  - Utilise la nouvelle méthode `get_reuters_rates_data` pour obtenir les taux
+  - Conserve la logique de fusion des taux existants et nouveaux
+  - Améliore la gestion des erreurs lors du parsing JSON
+
+- `_compute_reuters_rate` (modèle sale.order.line) :
+  - Conserve la logique de récupération des taux depuis les données sérialisées
+  - Ajoute une récupération en temps réel si le taux n'est pas trouvé dans les données sérialisées
+  - Améliore la gestion des erreurs lors du parsing JSON
+
+### 4.6 Paramètres de configuration
 - Nouveau paramètre : `loomis_sale.reuters_rate_api_base_url`
 - Paramètres conservés :
   - `loomis_sale.global_threshold_margin`
@@ -123,6 +135,6 @@ Cette migration des APIs SOAP vers REST apporte de nombreux avantages :
 
 Pour l'API Balance Client, nous conservons le cron quotidien et la méthode `_import_balance_client` pour maintenir la compatibilité avec les processus existants, tout en améliorant l'implémentation sous-jacente.
 
-Pour l'API Reuters, nous conservons le mécanisme de fallback avec `FAKE_RATES` pour assurer la continuité du service en cas d'indisponibilité de l'API.
+Pour l'API Reuters, nous conservons le mécanisme de fallback avec `FAKE_RATES` pour assurer la continuité du service en cas d'indisponibilité de l'API. Les méthodes `_onchange_currency_reuters_rate_serialized` et `_compute_reuters_rate` ont été adaptées pour utiliser la nouvelle API REST tout en maintenant la compatibilité avec les processus existants.
 
 Cette évolution s'inscrit dans notre stratégie globale de modernisation des systèmes d'information et prépare le terrain pour de futures améliorations.
