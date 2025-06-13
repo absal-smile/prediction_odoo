@@ -1,5 +1,3 @@
-Votre documentation est très bien structurée et complète. Je vais l'adapter pour inclure les informations spécifiques concernant les champs à supprimer et à conserver, ainsi que les impacts sur le code existant. Voici la version finale:
-
 # Documentation technique : Migration SOAP vers REST pour l'API Reuters
 
 ## 1. Contexte et objectifs
