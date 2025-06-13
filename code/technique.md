@@ -1,239 +1,145 @@
-# Documentation technique : Changements structurels pour la migration SOAP vers REST
+# Documentation technique : Migration des APIs SOAP vers REST
 
-## 1. Structure générale des modules
+## 1. Contexte et objectifs
 
-### Modifications communes aux deux modules
+Dans le cadre de la modernisation de notre infrastructure, nous devons migrer deux APIs actuellement implémentées en SOAP vers des APIs REST :
 
-| Aspect | Avant (SOAP) | Après (REST) |
-|--------|--------------|--------------|
-| **Imports** | `from zeep import Client, Transport` | `import requests` |
-| **Authentification** | Classes spécifiques (HttpNtlmAuth) | Headers HTTP standards |
-| **Traitement des réponses** | Automatique via zeep | Parsing JSON manuel |
+1. **API Balance Client** : Utilisée pour récupérer les soldes des comptes clients
+2. **API Reuters** : Utilisée pour récupérer les taux de change entre différentes devises
 
-## 2. Module de solde client (`client_balance.py`)
+Cette migration vise à :
+- Simplifier l'architecture technique
+- Améliorer les performances
+- Faciliter la maintenance
+- Moderniser notre stack technologique
 
-### Structure actuelle
-```
-_get_account_auth()
-_get_client_balance_environment()
-_get_client()
-get_balance_client()
-```
+## 2. Analyse de l'existant
 
-### Structure proposée
-```
-_get_auth_credentials()
-_get_client_environment()
-_get_auth_headers()
-_build_balance_url()
-get_balance_client()
-```
+### API Balance Client
+- Utilise actuellement le protocole SOAP avec authentification NTLM
+- Les soldes sont récupérés via un cron quotidien qui met à jour les enregistrements
+- Configuration via paramètres système
 
-### Changements détaillés
+### API Reuters
+- Utilise actuellement le protocole SOAP
+- Les taux sont stockés dans des champs sérialisés
+- Mise à jour périodique via un cron
+- Mécanisme de fallback avec des taux prédéfinis
 
-#### 2.1 Fonction d'authentification
-**Avant:**
-```python
-def _get_client(env):
-    wsdl = env["ir.config_parameter"].sudo().get_param(
-        "loomis_partner.client_balance_api")
-    username, password = _get_account_auth(env)
-    session = Session()
-    session.auth = HttpNtlmAuth(username, password)
-    transport = Transport(session=session)
-    return Client(wsdl=wsdl, transport=transport)
-```
+## 3. Fonctions modifiées et nouvelles fonctions
 
-**Après:**
-```python
-def _get_auth_headers(env):
-    username, password = _get_auth_credentials(env)
-    # Option 1: Basic Auth
-    auth_str = f"{username}:{password}"
-    auth_bytes = auth_str.encode('ascii')
-    auth_b64 = base64.b64encode(auth_bytes).decode('ascii')
-    return {
-        "Authorization": f"Basic {auth_b64}",
-        "Content-Type": "application/json"
-    }
-    
-    # Option 2: Bearer Token (si l'API utilise OAuth)
-    # token = _get_token(env, username, password)
-    # return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-```
+### 3.1 API Balance Client
 
-#### 2.2 Fonction principale
-**Avant:**
-```python
-def get_balance_client(env, account, devise):
-    response = 0
-    if config.get('enable_import_client_balance'):
-        client = _get_client(env)
-        client_balance_environment = _get_client_balance_environment(env)
-        try:
-            response = client.service.GetSoldeCompteComptable(
-                client_balance_environment, account, devise)
-        except Exception:
-            _logger.error("Error on API of import Balance client")
-    return response
-```
+#### Fonctions conservées sans modification
+- `_get_account_auth` : Récupère les identifiants d'authentification
+- `_get_client_balance_environment` : Récupère l'environnement configuré
 
-**Après:**
-```python
-def get_balance_client(env, account, devise):
-    response = 0
-    if config.get('enable_import_client_balance'):
-        headers = _get_auth_headers(env)
-        company = _get_client_environment(env)
-        url = _build_balance_url(env, company, account, devise)
-        try:
-            response = requests.get(url, headers=headers, timeout=10)
-            if response.status_code == 200:
-                data = response.json()
-                response = data.get("balance", 0)
-            else:
-                _logger.error(f"Error on API of import Balance client: {response.status_code}")
-        except Exception as e:
-            _logger.error(f"Error on API of import Balance client: {str(e)}")
-    return response
-```
+#### Fonctions à supprimer
+- `_get_client` : Crée un client SOAP (remplacée par une construction d'URL REST)
 
-#### 2.3 Nouvelle fonction pour construire l'URL
-```python
-def _build_balance_url(env, company, account, currency):
-    base_url = env["ir.config_parameter"].sudo().get_param(
-        "loomis_partner.client_balance_api_base_url", 
-        "https://uat-apps.cprb.fr/crow.api")
-    return f"{base_url}/accounting/balance/{company}/{account}/{currency}"
-```
+#### Fonctions modifiées
+- `get_balance_client` : Fonction principale qui récupère le solde
+  - **Avant** : Utilise un client SOAP pour appeler `GetSoldeCompteComptable`
+  - **Après** : Utilise une requête HTTP GET vers l'API REST
+  - **Pourquoi** : Simplification du code et alignement sur les standards modernes
 
-## 3. Module de taux Reuters (`reuters.py`)
+#### Nouvelles fonctions
+- `_build_balance_url` : Construit l'URL REST pour l'API de solde client
+  - **Remplace** : La logique de création du client SOAP dans `_get_client`
+  - **Pourquoi** : Nécessaire pour construire l'URL REST avec les paramètres appropriés
 
-### Structure actuelle
-```
-_get_currency_code()
-_get_fake_sale_rate()
-_get_sale_rate()
-_get_wsdl_client()
-get_course_change_reuters()
-```
+- `get_account_balance` (dans le modèle res.partner) : Récupère le solde à la demande
+  - **Remplace** : La méthode `_import_balance_client` qui était appelée par le cron
+  - **Pourquoi** : Passage d'un modèle périodique à un modèle à la demande
 
-### Structure proposée
-```
-_get_currency_code()
-_get_fake_sale_rate()
-_get_rate_from_api()
-_build_rate_url()
-get_course_change_reuters()
-```
+- `refresh_balance` (dans le modèle client.account) : Bouton pour rafraîchir le solde
+  - **Nouvelle fonction** : N'existait pas dans l'ancienne implémentation
+  - **Pourquoi** : Permet à l'utilisateur de mettre à jour manuellement le solde
 
-### Changements détaillés
+### 3.2 API Reuters
 
-#### 3.1 Fonction d'appel API
-**Avant:**
-```python
-def _get_sale_rate(client, source_currency, target_currency, value):
-    response = client.service.GetCoursChangeReuters(
-        "ODEAL-Sales", source_currency, target_currency)
-    return float(response and response[value] or "1" or 1)
-```
+#### Fonctions conservées sans modification
+- `_get_currency_code` : Extrait le code de devise
+- `_get_fake_sale_rate` : Récupère un taux prédéfini (fallback)
+- `FAKE_RATES` : Constante contenant des taux prédéfinis
 
-**Après:**
-```python
-def _get_rate_from_api(env, source_currency, target_currency, value="CoursVente"):
-    url = _build_rate_url(env, source_currency, target_currency)
-    try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            # Adapter selon la structure réelle de la réponse
-            return float(data.get(value, data.get("rate", 1)))
-        else:
-            _logger.error(f"Error fetching rate: {response.status_code}")
-            return 1
-    except Exception as e:
-        _logger.error(f"Error in API call: {str(e)}")
-        return 1
-```
+#### Fonctions à supprimer
+- `_get_wsdl_client` : Crée un client SOAP (remplacée par une construction d'URL REST)
+- `_get_sale_rate` : Appelle la méthode SOAP `GetCoursChangeReuters`
 
-#### 3.2 Fonction principale
-**Avant:**
-```python
-def get_course_change_reuters(
-        env, settlement_currency, sale_currency, value="CoursVente"):
-    source_currency = _get_currency_code(settlement_currency)
-    target_currency = _get_currency_code(sale_currency)
-    if source_currency == target_currency:
-        return 1
-    if not tools.config.get("enable_reuters_calcul"):
-        return _get_fake_sale_rate(source_currency, target_currency)
-    try:
-        client = _get_wsdl_client(env)
-        return _get_sale_rate(client, source_currency, target_currency, value)
-    except Exception:
-        _logger.error("Error on API fetching Reuters rate")
-        return 0
-```
+#### Fonctions modifiées
+- `get_course_change_reuters` : Fonction principale qui récupère le taux de change
+  - **Avant** : Utilise un client SOAP pour appeler `GetCoursChangeReuters`
+  - **Après** : Utilise une requête HTTP GET vers l'API REST
+  - **Pourquoi** : Simplification du code et alignement sur les standards modernes
 
-**Après:**
-```python
-def get_course_change_reuters(
-        env, settlement_currency, sale_currency, value="CoursVente"):
-    source_currency = _get_currency_code(settlement_currency)
-    target_currency = _get_currency_code(sale_currency)
-    if source_currency == target_currency:
-        return 1
-    if not tools.config.get("enable_reuters_calcul"):
-        return _get_fake_sale_rate(source_currency, target_currency)
-    try:
-        return _get_rate_from_api(env, source_currency, target_currency, value)
-    except Exception:
-        _logger.error("Error on API fetching Reuters rate")
-        return 0
-```
+- `_onchange_currency_reuters_rate_serialized` : Déclenché lors du changement de devise
+  - **Avant** : Lit les taux depuis le champ sérialisé de la devise
+  - **Après** : Récupère les taux en temps réel via l'API REST
+  - **Pourquoi** : Les taux ne sont plus stockés mais récupérés à la demande
 
-#### 3.3 Nouvelle fonction pour construire l'URL
-```python
-def _build_rate_url(env, source_currency, target_currency):
-    base_url = env["ir.config_parameter"].sudo().get_param(
-        "loomis_sale.reuters_rate_api_base_url", 
-        "https://uat-apps.cprb.fr/crow.api")
-    return f"{base_url}/rate/{source_currency}/{target_currency}"
-```
+- `_compute_reuters_rate` : Calcule le taux pour une ligne de commande
+  - **Avant** : Lit principalement depuis les données sérialisées
+  - **Après** : Peut récupérer le taux en temps réel si non trouvé dans les données sérialisées
+  - **Pourquoi** : Assure la disponibilité des taux même si non présents dans les données sérialisées
 
-## 4. Différences structurelles entre SOAP et REST
+- `_get_default` : Initialise les valeurs par défaut d'une commande
+  - **Avant** : Appelle `update_reuters_rate` pour mettre à jour les taux
+  - **Après** : Appelle directement `_onchange_currency_reuters_rate_serialized`
+  - **Pourquoi** : La méthode `update_reuters_rate` est supprimée
 
-### SOAP (structure actuelle)
-- **Corps de message XML complexe** avec enveloppe, en-tête et corps
-- **Méthodes explicites** appelées sur le service (`client.service.GetCoursChangeReuters`)
-- **Paramètres** passés comme arguments de méthode
-- **Transport** géré par la bibliothèque zeep
-- **Parsing automatique** des réponses XML
+#### Nouvelles fonctions
+- `_build_rate_url` : Construit l'URL REST pour l'API de taux de change
+  - **Remplace** : La logique de création du client SOAP dans `_get_wsdl_client`
+  - **Pourquoi** : Nécessaire pour construire l'URL REST avec les paramètres appropriés
 
-### REST (nouvelle structure)
-- **URL significative** contenant les ressources et identifiants
-- **Méthodes HTTP** standard (GET, POST, etc.)
-- **Paramètres** intégrés dans l'URL ou en query string
-- **En-têtes HTTP** pour l'authentification et le type de contenu
-- **Parsing manuel** des réponses JSON
+- `_get_rate_from_api` : Récupère le taux depuis l'API REST
+  - **Remplace** : La fonction `_get_sale_rate` qui utilisait SOAP
+  - **Pourquoi** : Adaptation à l'API REST
 
-## 5. Paramètres de configuration à modifier
+- `get_reuters_rate` (dans le modèle res.currency) : Récupère un taux en temps réel
+  - **Nouvelle fonction** : Permet d'obtenir un taux spécifique à la demande
+  - **Pourquoi** : Remplace la logique de stockage des taux
 
-| Module | Ancien paramètre | Nouveaux paramètres |
-|--------|------------------|---------------------|
-| **Reuters** | `loomis_sale.reuters_rate_api` | `loomis_sale.reuters_rate_api_base_url` |
-| **Balance Client** | `loomis_partner.client_balance_api` | `loomis_partner.client_balance_api_base_url` |
-| | `loomis_partner.client_balance_username` | (inchangé ou adapté selon l'authentification) |
-| | `loomis_partner.client_balance_password` | (inchangé ou adapté selon l'authentification) |
-| | `loomis_partner.client_balance_environment` | (inchangé, utilisé comme paramètre d'URL) |
+- `get_reuters_rates_data` (dans le modèle res.currency) : Génère les données de taux
+  - **Remplace** : Une partie de la logique de `update_reuters_rate`
+  - **Pourquoi** : Nécessaire pour générer les données de taux à la demande
 
-## 6. Considérations techniques supplémentaires
+## 4. Éléments à supprimer
 
-- **Gestion des timeouts** : Ajouter des paramètres de timeout explicites pour les appels REST
-- **Retry mechanism** : Considérer l'ajout d'une logique de réessai pour les appels échoués
-- **Validation des réponses** : Ajouter des validations plus strictes des structures JSON reçues
-- **Logging amélioré** : Enregistrer plus de détails sur les erreurs HTTP
-- **Métriques** : Ajouter des mesures de performance pour surveiller les temps de réponse
-- **Cache** : Considérer l'implémentation d'un cache pour réduire les appels API
+### API Balance Client
+- Cron `ir_cron_balance_client`
+- Fonction `_get_client` dans le module client_balance
+- Méthode `_import_balance_client` dans le modèle res.partner
+- Paramètre `loomis_partner.client_balance_api`
 
-Cette documentation technique détaille les changements structurels nécessaires pour migrer les deux modules de SOAP vers REST, en préservant la logique métier existante tout en adaptant les mécanismes d'appel API.
+### API Reuters
+- Cron `update_reuters_rate`
+- Fonction `_get_wsdl_client` dans le module reuters
+- Fonction `_get_sale_rate` dans le module reuters
+- Méthode `update_reuters_rate` dans le modèle res.currency
+- Champ `currency_reuters_rate_serialized` dans le modèle res.currency
+- Paramètre `loomis_sale.reuters_rate_api`
+
+## 5. Nouveaux paramètres de configuration
+
+| Ancien paramètre | Nouveau paramètre | Description |
+|------------------|-------------------|-------------|
+| `loomis_partner.client_balance_api` | `loomis_partner.client_balance_api_base_url` | URL de base de l'API Balance Client |
+| `loomis_sale.reuters_rate_api` | `loomis_sale.reuters_rate_api_base_url` | URL de base de l'API Reuters |
+
+
+
+
+## 6. Conclusion
+
+Cette migration des APIs SOAP vers REST apporte de nombreux avantages :
+
+1. **Modernisation** : Alignement sur les standards actuels d'API
+2. **Simplification** : Architecture plus légère et plus facile à maintenir
+3. **Performance** : Réduction des temps de traitement et de la charge serveur
+4. **Fiabilité** : Meilleure gestion des erreurs et des cas limites
+
+L'approche progressive de déploiement minimise les risques tout en permettant une migration complète. La conservation temporaire des anciens mécanismes offre une possibilité de rollback rapide en cas de problème.
+
+Cette évolution s'inscrit dans notre stratégie globale de modernisation des systèmes d'information et prépare le terrain pour de futures améliorations.
