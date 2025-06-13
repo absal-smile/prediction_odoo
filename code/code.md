@@ -1,13 +1,13 @@
-# Code complet pour la migration de l'API Balance Client (SOAP vers REST)
+# Code modifié pour la migration SOAP vers REST
+
+## 1. Fichier client_balance.py (API Balance Client)
 
 ```python
-# File: /home/smile/Bureau/workspace/loomis/loomis-addons/loomis_client_account/tools/client_balance.py
-
+# File: /path/to/client_balance.py
 import logging
 import requests
-import base64
 from odoo.tools import config
-
+from requests_ntlm import HttpNtlmAuth
 _logger = logging.getLogger(__name__)
 
 
@@ -29,80 +29,153 @@ def _get_client_balance_environment(env):
     return client_balance_environment
 
 
-def _get_auth_headers(env):
-    """
-    Crée les en-têtes d'authentification pour l'API REST.
-    Remplace la logique d'authentification NTLM par des en-têtes HTTP standards.
-    """
-    username, password = _get_account_auth(env)
-    
-    # Option 1: Basic Auth
-    auth_str = f"{username}:{password}"
-    auth_bytes = auth_str.encode('ascii')
-    auth_b64 = base64.b64encode(auth_bytes).decode('ascii')
-    return {
-        "Authorization": f"Basic {auth_b64}",
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-    
-    # Option 2 (alternative): Bearer Token
-    # token = _get_token(env, username, password)
-    # return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-
-
-def _build_balance_url(env, company, account, currency):
+def _build_balance_url(env, account, devise):
     """
     Construit l'URL REST pour l'API de solde client.
-    Remplace la création du client SOAP par la construction d'une URL REST.
     """
     base_url = env["ir.config_parameter"].sudo().get_param(
         "loomis_partner.client_balance_api_base_url", 
         "https://uat-apps.cprb.fr/crow.api")
-    return f"{base_url}/accounting/balance/{company}/{account}/{currency}"
+    company = _get_client_balance_environment(env)
+    return f"{base_url}/accounting/balance/{company}/{account}/{devise}"
 
 
 def get_balance_client(env, account, devise):
     """
-    Récupère le solde client via l'API REST.
-    Conserve la même signature et comportement externe, mais utilise REST au lieu de SOAP.
+    Récupère le solde d'un compte client via l'API REST.
     """
     response = 0
     if config.get('enable_import_client_balance'):
-        headers = _get_auth_headers(env)
-        company = _get_client_balance_environment(env)
-        url = _build_balance_url(env, company, account, devise)
-        
         try:
-            api_response = requests.get(url, headers=headers, timeout=10)
+            url = _build_balance_url(env, account, devise)
+            username, password = _get_account_auth(env)
+            
+            session = requests.Session()
+            session.auth = HttpNtlmAuth(username, password)
+            
+            api_response = session.get(url, timeout=10)
+            
             if api_response.status_code == 200:
                 data = api_response.json()
                 # Adapter selon la structure réelle de la réponse JSON
-                response = data.get("balance", 0)
+                response = float(data.get("balance", 0))
             else:
-                _logger.error(f"Error on API of import Balance client: HTTP {api_response.status_code}")
+                _logger.warning(f"Error fetching balance: HTTP {api_response.status_code}")
                 if api_response.text:
-                    _logger.error(f"Response details: {api_response.text[:200]}")
+                    _logger.warning(f"Response details: {api_response.text[:200]}")
         except Exception as e:
             _logger.error(f"Error on API of import Balance client: {str(e)}")
-    
     return response
 ```
 
-# Code complet pour la migration de l'API Reuters (SOAP vers REST)
+## 2. Fichier res_partner.py (Modèle Partner)
 
 ```python
-# File: /home/smile/Bureau/workspace/loomis/loomis-addons/loomis_order/tools/reuters.py
+# File: /path/to/res_partner.py
+from odoo import models, api
+from odoo.addons.loomis_partner.tools import client_balance
 
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    def get_account_balance(self, account):
+        """
+        Récupère le solde d'un compte client spécifique à la demande.
+        """
+        if not account:
+            return 0
+        
+        balance = client_balance.get_balance_client(
+            self.env, account.name, account.currency_id.name)
+        
+        # Mettre à jour le solde dans l'enregistrement
+        if hasattr(account, 'write'):
+            account.write({'balance': balance})
+        
+        return balance
+```
+
+## 3. Fichier client_account.py (Modèle Compte Client)
+
+```python
+# File: /path/to/client_account.py
+from odoo import models, api
+
+class ClientAccount(models.Model):
+    _inherit = 'client.account'
+
+    def refresh_balance(self):
+        """
+        Rafraîchit le solde du compte client.
+        """
+        for account in self:
+            self.env['res.partner'].get_account_balance(account)
+        return True
+    
+    @api.model
+    def get_view(self, view_id=None, view_type='form', **options):
+        res = super().get_view(view_id=view_id, view_type=view_type, **options)
+        if view_type == 'form':
+            # Rafraîchir le solde lors de l'ouverture du formulaire
+            if self:
+                self.env['res.partner'].get_account_balance(self)
+        return res
+```
+
+## 4. Fichier client_account_view.xml (Vue Compte Client)
+
+```xml
+<!-- File: /path/to/client_account_view.xml -->
+<odoo>
+    <record id="view_client_account_form" model="ir.ui.view">
+        <field name="name">client.account.form</field>
+        <field name="model">client.account</field>
+        <field name="inherit_id" ref="loomis_partner.view_client_account_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="refresh_balance" string="Rafraîchir le solde" type="object" class="oe_highlight"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+```
+
+## 5. Fichier ir_config_parameter.xml (API Balance Client)
+
+```xml
+<!-- File: /path/to/ir_config_parameter.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Nouveau paramètre REST - URL de base de l'API -->
+        <record id="client_balance_api_base_url" model="ir.config_parameter">
+            <field name="key">loomis_partner.client_balance_api_base_url</field>
+            <field name="value">https://uat-apps.cprb.fr/crow.api</field>
+        </record>
+        
+        <!-- Paramètre d'environnement - conservé et toujours utilisé -->
+        <record id="client_balance_environment" model="ir.config_parameter">
+            <field name="key">loomis_partner.client_balance_environment</field>
+            <field name="value">ztest6</field>
+        </record>
+    </data>
+</odoo>
+```
+
+## 6. Fichier reuters.py (API Reuters)
+
+```python
+# File: /path/to/reuters.py
 import logging
 import random
 import requests
-
 from odoo import tools
 
 _logger = logging.getLogger(__name__)
 
-
+# Conservé sans modification
 FAKE_RATES = {
     "EUR/USD": 1.059200,
     "USD/EUR": 0.9444654325651681148469965999,
@@ -133,7 +206,6 @@ def _get_fake_sale_rate(source_currency, target_currency):
 def _build_rate_url(env, source_currency, target_currency):
     """
     Construit l'URL REST pour l'API de taux de change.
-    Remplace la création du client SOAP par la construction d'une URL REST.
     """
     base_url = env["ir.config_parameter"].sudo().get_param(
         "loomis_sale.reuters_rate_api_base_url", 
@@ -144,7 +216,6 @@ def _build_rate_url(env, source_currency, target_currency):
 def _get_rate_from_api(env, source_currency, target_currency, value="CoursVente"):
     """
     Récupère le taux de change depuis l'API REST.
-    Remplace l'appel SOAP par une requête HTTP GET.
     """
     url = _build_rate_url(env, source_currency, target_currency)
     try:
@@ -152,7 +223,6 @@ def _get_rate_from_api(env, source_currency, target_currency, value="CoursVente"
         if response.status_code == 200:
             data = response.json()
             # Adapter selon la structure réelle de la réponse JSON
-            # Supposons que la réponse contient une clé "rate" ou la clé spécifiée par "value"
             return float(data.get(value, data.get("rate", 1)))
         else:
             _logger.warning(f"Error fetching rate: HTTP {response.status_code}")
@@ -168,7 +238,6 @@ def get_course_change_reuters(
         env, settlement_currency, sale_currency, value="CoursVente"):
     """
     Récupère le taux de change Reuters via l'API REST.
-    Conserve la même signature et comportement externe, mais utilise REST au lieu de SOAP.
     """
     source_currency = _get_currency_code(settlement_currency)
     target_currency = _get_currency_code(sale_currency)
@@ -187,12 +256,148 @@ def get_course_change_reuters(
         return 0
 ```
 
-Ces deux fichiers complets représentent la migration des API SOAP vers REST tout en maintenant la même interface externe. Les principales modifications sont :
+## 7. Fichier res_currency.py (Modèle Currency)
 
-1. Remplacement des bibliothèques SOAP par requests
-2. Création de nouvelles fonctions pour construire les URLs REST
-3. Ajout de fonctions pour gérer l'authentification via en-têtes HTTP
-4. Amélioration de la gestion des erreurs et du logging
-5. Parsing manuel des réponses JSON
+```python
+# File: /path/to/res_currency.py
+from odoo import models, api
 
-Les paramètres système devront également être mis à jour pour pointer vers les nouvelles URLs de base REST au lieu des URLs WSDL.
+class ResCurrency(models.Model):
+    _inherit = 'res.currency'
+
+    def get_reuters_rate(self, product_currency):
+        """Get Reuters rate between currency and product currency in real-time"""
+        from odoo.addons.loomis_order.tools.reuters import get_course_change_reuters
+        
+        if isinstance(product_currency, str):
+            # Si c'est déjà un code de devise
+            product_currency_code = product_currency
+        else:
+            # Si c'est un recordset (product.template ou res.currency)
+            product_currency_code = product_currency.default_code if hasattr(product_currency, 'default_code') else product_currency.name
+        
+        return get_course_change_reuters(self.env, self, product_currency_code)
+
+    def get_reuters_rates_data(self, product_templates=None):
+        """Generate Reuters rates data for all product templates or specified ones"""
+        if not product_templates:
+            product_templates = self.env['product.template'].search([])
+        
+        result = []
+        for product in product_templates:
+            rate = self.get_reuters_rate(product)
+            result.append({
+                'product_tmpl_id': product.default_code,
+                'currency': self.name,
+                'reuters': rate
+            })
+        
+        return result
+```
+
+## 8. Fichier ir_config_parameter.xml (API Reuters)
+
+```xml
+<!-- File: /path/to/ir_config_parameter.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Nouveau paramètre REST - URL de base de l'API -->
+        <record id="reuters_rate_api_base_url" model="ir.config_parameter">
+            <field name="key">loomis_sale.reuters_rate_api_base_url</field>
+            <field name="value">https://uat-apps.cprb.fr/crow.api</field>
+        </record>
+
+        <!-- Paramètres existants conservés -->
+        <record id="global_threshold_margin" model="ir.config_parameter">
+            <field name="key">loomis_sale.global_threshold_margin</field>
+            <field name="value">0.15</field>
+        </record>
+
+        <record id="rate_volatility_percentage" model="ir.config_parameter">
+            <field name="key">loomis_sale.rate_volatility_percentage</field>
+            <field name="value">0.05</field>
+        </record>
+    </data>
+</odoo>
+```
+
+## 9. Fichier sale_order.py (Modèle Sale Order)
+
+```python
+# File: /path/to/sale_order.py
+from odoo import models, api
+import json
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    @api.onchange('settlement_currency_id')
+    def _onchange_currency_reuters_rate_serialized(self):
+        if not self.settlement_currency_id:
+            return
+        
+        # Récupérer les taux existants s'il y en a
+        existing_rates = []
+        if self.order_currency_reuters_rate_serialized:
+            try:
+                existing_rates = json.loads(self.order_currency_reuters_rate_serialized)
+            except (ValueError, json.JSONDecodeError):
+                existing_rates = []
+        
+        # Filtrer pour enlever les entrées avec la devise actuelle
+        filtered_rates = [r for r in existing_rates if r.get('currency') != self.settlement_currency_id.name]
+        
+        # Obtenir les nouveaux taux pour la devise actuelle
+        new_rates = self.settlement_currency_id.get_reuters_rates_data()
+        
+        # Combiner les taux
+        combined_rates = filtered_rates + new_rates
+        
+        # Mettre à jour le champ sérialisé
+        self.order_currency_reuters_rate_serialized = json.dumps(combined_rates)
+```
+
+## 10. Fichier sale_order_line.py (Modèle Sale Order Line)
+
+```python
+# File: /path/to/sale_order_line.py
+from odoo import models, api, fields
+import json
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    reuters_rate = fields.Float(compute='_compute_reuters_rate', store=True)
+
+    @api.depends("order_id.order_currency_reuters_rate_serialized",
+                "product_tmp_id", "order_id.settlement_currency_id")
+    def _compute_reuters_rate(self):
+        for line in self:
+            line.reuters_rate = 1
+            if not line.product_tmp_id or not line.order_id.settlement_currency_id:
+                continue
+                
+            product_tmpl_iso_code = line.product_tmp_id.default_code
+            
+            # Essayer d'abord d'obtenir le taux depuis les données sérialisées
+            if reuters_couple_serialized := line.order_id.order_currency_reuters_rate_serialized:
+                try:
+                    reuters_couple = json.loads(reuters_couple_serialized)
+                    for rc in reuters_couple:
+                        if rc['product_tmpl_id'] == product_tmpl_iso_code \
+                            and rc['currency'] == line.order_id.settlement_currency_id.name:
+                            line.reuters_rate = rc['reuters']
+                            break
+                except (ValueError, json.JSONDecodeError):
+                    pass
+            
+            # Si aucun taux n'a été trouvé, obtenir le taux en temps réel
+            if line.reuters_rate == 1 and line.product_tmp_id and line.order_id.settlement_currency_id:
+                from odoo.addons.loomis_order.tools.reuters import get_course_change_reuters
+                line.reuters_rate = get_course_change_reuters(
+                    line.env, 
+                    line.order_id.settlement_currency_id, 
+                    line.product_tmp_id
+                )
+```
