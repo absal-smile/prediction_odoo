@@ -323,93 +323,9 @@ Le cron suivant n'est plus nécessaire car les taux sont maintenant récupérés
 </record>
 ```
 
-## 8. Plan de migration
 
-### Phase 1: Préparation (Environnement de développement)
 
-1. **Mise à jour des fichiers de configuration**
-   - Ajouter les nouveaux paramètres d'URL REST tout en conservant les anciens paramètres SOAP
-   - Vérifier que les URLs REST sont correctes pour l'environnement de développement
-
-2. **Mise à jour du code**
-   - Modifier le fichier `reuters.py` pour utiliser l'API REST
-   - Ajouter les nouvelles méthodes au modèle `res.currency`
-   - Adapter les méthodes qui utilisent les taux de change
-   - Ajouter des logs supplémentaires pour suivre les appels API pendant la phase de test
-
-3. **Tests initiaux**
-   - Vérifier que les taux Reuters sont correctement récupérés
-   - Vérifier que les commandes existantes continuent de fonctionner
-   - Vérifier que les nouvelles commandes obtiennent correctement les taux
-
-### Phase 2: Déploiement en UAT (Test)
-
-1. **Mise à jour des fichiers de configuration**
-   - Adapter les URLs REST pour l'environnement UAT
-   - Conserver les anciens paramètres SOAP comme fallback
-
-2. **Tests approfondis**
-   - Exécuter des tests de charge pour vérifier les performances
-   - Vérifier le comportement en cas d'erreur ou d'indisponibilité de l'API
-   - Valider les résultats avec les utilisateurs métier
-
-3. **Monitoring**
-   - Mettre en place une surveillance spécifique des logs d'erreur liés aux APIs
-   - Suivre les temps de réponse des appels API
-
-### Phase 3: Déploiement en Production
-
-1. **Mise à jour des fichiers de configuration**
-   - Adapter les URLs REST pour l'environnement de production
-   - Conserver temporairement les anciens paramètres SOAP
-
-2. **Déploiement progressif**
-   - Déployer d'abord les modifications de code
-   - Activer la nouvelle API REST
-   - Surveiller attentivement les logs et les performances
-
-3. **Validation finale**
-   - Vérifier que toutes les fonctionnalités dépendantes fonctionnent correctement
-   - Obtenir la validation des utilisateurs métier
-
-### Phase 4: Nettoyage (après période de stabilité)
-
-1. **Suppression des éléments obsolètes**
-   - Supprimer le cron `update_reuters_rate`
-   - Supprimer le champ `currency_reuters_rate_serialized`
-   - Supprimer les paramètres SOAP devenus inutiles
-   - Mettre à jour la documentation
-
-2. **Nettoyage du code**
-   - Supprimer les imports inutilisés (zeep)
-   - Optimiser le code REST si nécessaire
-
-## 9. Considérations importantes
-
-### Environnements multiples
-Les URLs REST doivent être adaptées pour chaque environnement :
-- Développement: `https://dev-apps.cprb.fr/crow.api`
-- UAT: `https://uat-apps.cprb.fr/crow.api`
-- Production: `https://apps.cprb.fr/crow.api`
-
-### Sécurité
-- Assurez-vous que les nouvelles URLs utilisent HTTPS
-- Vérifiez que les identifiants d'authentification sont correctement gérés et sécurisés
-- Validez que les droits d'accès aux nouvelles APIs sont correctement configurés
-
-### Monitoring et alertes
-- Configurez des alertes spécifiques pour les erreurs d'API pendant la période de migration
-- Suivez les métriques de performance pour détecter d'éventuelles dégradations
-
-### Documentation
-- Mettez à jour la documentation technique avec les nouvelles URLs et structures de réponse
-- Documentez la procédure de rollback en cas de problème majeur
-
-### Formation
-- Informez l'équipe de support des changements effectués
-- Préparez-les à diagnostiquer les problèmes potentiels liés aux nouvelles APIs
-
-## 10. Conclusion
+## 8. Conclusion
 
 Cette migration de SOAP vers REST pour l'API Reuters présente plusieurs avantages :
 
