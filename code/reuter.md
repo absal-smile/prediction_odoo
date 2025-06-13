@@ -242,6 +242,7 @@ def _onchange_currency_reuters_rate_serialized(self):
     # Mettre à jour le champ sérialisé
     self.order_currency_reuters_rate_serialized = json.dumps(combined_rates)
 ```
+Impact: Méthode déclenchée lors du changement de devise de règlement. Doit être modifiée pour récupérer les taux en temps réel au lieu de les lire depuis currency_reuters_rate_serialized.
 
 #### _compute_reuters_rate
 
@@ -277,6 +278,7 @@ def _compute_reuters_rate(self):
                 line.product_tmp_id
             )
 ```
+Impact: Méthode calculée qui détermine le taux de change pour une ligne de commande. Doit être adaptée pour obtenir le taux en temps réel si non trouvé dans les données sérialisées.
 
 #### _get_default
 
@@ -291,6 +293,7 @@ def _get_default(self, order):
     order.write({'pricelist_id': order.authorized_pricelist_ids[0].id})
     order.order_line[0]._set_default_margin_percent()
 ```
+Impact: Méthode appelée lors de la création d'une commande. L'appel à update_reuters_rate() doit être supprimé.
 
 ## 6. Configuration système
 
