@@ -1,29 +1,40 @@
-Voici le tableau réorganisé de manière plus claire et structurée :
+Voici le tableau réorganisé avec les utilisateurs et leurs rôles assignés :
 
-## Tableau des Utilisateurs et Rôles Loomis
+| Nom | Email | Rôle Principal |
+|-----|-------|----------------|
+| **Administrateurs** |
+| Jassim OUAHBI | jassim.ouahbi@loomis.com | Loomis Admin Profile |
+| Stéphane GENDILLOU | stephane.gendillou@loomis.com | Loomis Admin Profile |
+| **Senior Clerks / Sales / Table Managers / Top Management** |
+| Adam CHELKI | adam.chelki@loomis.com | Senior Clerk, Sales, Table Manager, Top Management |
+| Alessandro TROMBI | alessandro.trombi@loomis.com | Senior Clerk, Sales, Table Manager, Top Management |
+| Christine ROUX | christine.roux@loomis.com | Senior Clerk, Sales, Table Manager, Top Management |
+| Nadège MELEDJE | nadege.meledje@loomis.com | Senior Clerk, Sales, Table Manager, Top Management |
+| Remi CAILLET | remi.caillet@loomis.com | Senior Clerk, Sales, Table Manager, Top Management |
+| Valentina ROMERO GARCIA | valentina.romero@loomis.com | Senior Clerk, Sales, Table Manager, Top Management |
+| **Backoffice / Repository Manager / CAC** |
+| Araxe Ermis | araxe.ermis@loomis.com | Backoffice, Repository Manager, CAC, Table Manager, Sales, Top Management |
+| Cecile BEILLEVAIRE | cecile.beillevaire@loomis.com | Backoffice, Repository Manager, CAC |
+| Dimitri BONNET | dimitri.bonnet@loomis.com | Backoffice, Repository Manager, CAC |
+| Karine IMBAULT | karine.imbault@loomis.com | Backoffice, Repository Manager, CAC |
+| Lusine MKRTCHYAN | lusine.mkrtchyan@loomis.com | Backoffice, Repository Manager, CAC |
+| Meihdi CARLIER | meihdi.carlier@loomis.com | Backoffice, Repository Manager, CAC |
+| Pascal RIALLAND | pascal.rialland@loomis.com | Backoffice, Repository Manager, CAC |
+| **Junior Cambist** |
+| Noémie CHAPLAULT | noemie.chaplault@loomis.com | Junior Cambist, Backoffice, Repository Manager, CAC |
 
-| **Nom** | **Email** | **Rôle Principal** | **Groupes/Permissions** |
-|---------|-----------|-------------------|-------------------------|
-| **Adam CHELKI** | adam.chelki@loomis.com | **Senior Clerk** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : tous les documents |
-| **Alessandro TROMBI** | alessandro.trombi@loomis.com | **Senior Clerk** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : tous les documents |
-| **Araxe ERMIS** | araxe.ermis@loomis.com | **Senior Clerk** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : tous les documents |
-| **Cecile BEILLEVAIRE** | cecile.beillevaire@loomis.com | **Backoffice** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne |
-| **Christine ROUX** | christine.roux@loomis.com | **Senior Clerk** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : tous les documents |
-| **Dimitri BONNET** | dimitri.bonnet@loomis.com | **Backoffice** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne |
-| **Jassim OUAHBI** | jassim.ouahbi@loomis.com | **🔴 Loomis Admin Profile** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• **Administrateur**<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• **Gestionnaire : Gérer tous les employés**<br>• Utilisateur<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : ses propres feuilles de temps uniquement<br>• Utilisateur : tous les documents<br>• Utilisateur : toutes les feuilles de temps |
-| **Karine IMBAULT** | karine.imbault@loomis.com | **Backoffice** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne |
-| **Lusine MKRTCHYAN** | lusine.mkrtchyan@loomis.com | **Backoffice** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne |
-| **Meihdi CARLIER** | meihdi.carlier@loomis.com | **Backoffice** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne |
-| **Nadège MELEDJE** | nadege.meledje@loomis.com | **Senior Clerk** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : tous les documents |
-| **Noémie CHAPLAULT** | noemie.chaplault@loomis.com | **Junior Cambist** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : ses propres feuilles de temps uniquement |
-| **Pascal RIALLAND** | pascal.rialland@loomis.com | **Backoffice** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne |
-| **Remi CAILLET** | remi.caillet@loomis.com | **Senior Clerk** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : tous les documents |
-| **Stéphane GENDILLOU** | stephane.gendillou@loomis.com | **🔴 Loomis Admin Profile** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• **Administrateur**<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• **Gestionnaire : Gérer tous les employés**<br>• Utilisateur<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : ses propres feuilles de temps uniquement<br>• Utilisateur : tous les documents<br>• Utilisateur : toutes les feuilles de temps |
-| **Valentina ROMERO GARCIA** | valentina.romero@loomis.com | **Senior Clerk** | • Accès à la fonctionnalité d'export<br>• Accès aux adresses privées<br>• Afficher les Politiques SLA<br>• Caractéristiques techniques<br>• Création de contact<br>• Éditeur de modèle d'email<br>• Feuilles de temps<br>• Utilisateur<br>• Utilisateur interne<br>• Utilisateur : mes documents seulement<br>• Utilisateur : tous les documents |
+**Tous les utilisateurs ont également accès aux rôles :** International Stock Manager, National Stock Manager, Logistics
 
-### **Résumé par Rôle :**
-
-- **🔴 Loomis Admin Profile** (2 utilisateurs) : Jassim OUAHBI, Stéphane GENDILLOU
-- **Senior Clerk** (6 utilisateurs) : Adam CHELKI, Alessandro TROMBI, Araxe ERMIS, Christine ROUX, Nadège MELEDJE, Remi CAILLET, Valentina ROMERO GARCIA
-- **Backoffice** (6 utilisateurs) : Cecile BEILLEVAIRE, Dimitri BONNET, Karine IMBAULT, Lusine MKRTCHYAN, Meihdi CARLIER, Pascal RIALLAND
-- **Junior Cambist** (1 utilisateur) : Noémie 
+**Résumé des rôles disponibles :**
+- Junior Cambist
+- Senior Clerk  
+- Sales
+- Table Manager
+- Top Management
+- Backoffice
+- Repository Manager
+- CAC
+- International Stock Manager
+- National Stock Manager
+- Logistics
+- Loomis Admin 
